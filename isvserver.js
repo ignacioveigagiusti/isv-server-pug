@@ -9,14 +9,14 @@ app.get('/', (req, res) => {
 
 app.get('/products', async (req, res) => {
     const allProducts = await productContainer.getAll();
-    res.send(JSON.stringify(allProducts))
+    res.json(allProducts);
 });
 
 app.get('/randomProduct', async (req, res) => {
     const allProducts = await productContainer.getAll();
     let randomId = Math.floor(Math.random() * allProducts.length) +1;
     const randomProduct = await productContainer.getById(randomId)
-    res.send(JSON.stringify(randomProduct))
+    res.json(randomProduct)
 });
 
 const server = app.listen(8080, () => {
