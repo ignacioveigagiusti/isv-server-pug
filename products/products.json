@@ -1,0 +1,19 @@
+[
+    {
+        "id":1,
+        "title":"Lana de Vidrio (m)",
+        "price":450,"thumbnail":"https://isvshop.netlify.app/assets/acustiverR.png"
+    },
+    {
+        "id":2,
+        "title":"Placa de Lana de Vidrio",
+        "price":450,
+        "thumbnail":"https://isvshop.netlify.app/assets/acustiverP.png"
+    },
+    {
+        "id":3,
+        "title":"Placa de Yeso (m²)",
+        "price":500,
+        "thumbnail":"https://isvshop.netlify.app/assets/durlock.png"
+    }
+]
