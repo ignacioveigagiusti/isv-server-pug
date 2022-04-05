@@ -1,22 +1,38 @@
 const express = require('express');
 const app = express();
-const Container = require('./products/container.js');
-const productContainer = new Container('./products/products.json');
+const Products = require('./api/products.js');
+const productContainer = new Products('./api/products.json');
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 app.get('/', (req, res) => {
-    res.redirect('/products')
+    res.redirect('/api/products')
 })
 
-app.get('/products', async (req, res) => {
+app.get('/api/products', async (req, res) => {
     const allProducts = await productContainer.getAll();
     res.json(allProducts);
 });
 
-app.get('/randomProduct', async (req, res) => {
-    const allProducts = await productContainer.getAll();
-    let randomId = Math.floor(Math.random() * allProducts.length) +1;
-    const randomProduct = await productContainer.getById(randomId)
-    res.json(randomProduct)
+app.get('/api/products/:id', async (req, res) => {
+    const param = req.params.id
+    const product = await productContainer.getById(param);
+    res.json(product);
+});
+
+app.post('/api/products', async (req, res) => {
+
+});
+
+app.put('/api/products/:id', async (req, res) => {
+    const param = req.params.id
+
+});
+
+app.delete('/api/products/:id', async (req, res) => {
+    const param = req.params.id
+
 });
 
 const server = app.listen(8080, () => {

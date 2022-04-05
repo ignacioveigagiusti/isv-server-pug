@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-class Container {
+class Products {
     constructor(fileToWork){
         this.fileToWork = fileToWork
     }
@@ -83,4 +83,4 @@ class Container {
     }
 }
 
-module.exports = Container
+module.exports = Products
