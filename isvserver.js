@@ -20,46 +20,71 @@ app.get('/', (req, res) => {
 })
 
 productRouter.get('/', async (req, res) => {
-    const allProducts = await productContainer.getAll();
-    res.json(allProducts);
+    try {
+        const allProducts = await productContainer.getAll();
+        res.json(allProducts);
+    } catch (err) {
+        res.send(`${err}`);
+    }
+    
 });
 
 productRouter.get('/:id', async (req, res) => {
-    const param = req.params.id;
-    const product = await productContainer.getById(param);
-    res.json(product);
+    try {
+        const param = req.params.id;
+        const product = await productContainer.getById(param);
+        res.json(product);
+    } catch (err) {
+        res.send(`${err}`);
+    }
 });
 
 productRouter.post('/', async (req, res) => {
-    let title = req.body.title;
-    let price = req.body.price;
-    let thumbnail = req.body.thumbnail;
-    price = parseFloat(price);
-    const newProduct = {title:title, price:price, thumbnail:thumbnail};
-    await productContainer.save(newProduct);
-    res.send(`Producto añadido: ${JSON.stringify(newProduct)}`);
+    try {
+        let title = req.body.title;
+        let price = req.body.price;
+        let thumbnail = req.body.thumbnail;
+        price = parseFloat(price);
+        const newProduct = {title:title, price:price, thumbnail:thumbnail};
+        await productContainer.save(newProduct);
+        res.send(`Producto añadido: ${JSON.stringify(newProduct)}`);
+    } catch (err) {
+        res.send(`${err}`);
+    }
 });
 
 productRouter.put('/', (req,res) => {
-    let putId = req.body.id;
-    res.redirect(307, `products/${putId}?_method=PUT`)
+    try {
+        let putId = req.body.id;
+        res.redirect(307, `products/${putId}?_method=PUT`)
+    } catch (err) {
+        res.send(`${err}`);
+    }
 })
 
 productRouter.put('/:id', async (req, res) => {
-    const param = req.params.id;
-    let title = req.body.title;
-    let price = req.body.price;
-    let thumbnail = req.body.thumbnail;
-    price = parseFloat(price);
-    const newProduct = {title:title, price:price, thumbnail:thumbnail};
-    await productContainer.edit(param, newProduct);
-    res.json(newProduct);
+    try {
+        const param = req.params.id;
+        let title = req.body.title;
+        let price = req.body.price;
+        let thumbnail = req.body.thumbnail;
+        price = parseFloat(price);
+        const newProduct = {title:title, price:price, thumbnail:thumbnail};
+        await productContainer.edit(param, newProduct);
+        res.json(newProduct);
+    } catch (err) {
+        res.send(`${err}`);
+    }
 });
 
 productRouter.delete('/:id', async (req, res) => {
-    const param = req.params.id;
-    await productContainer.deleteById(param);
-    res.send(`producto con id: ${param} eliminado exitosamente`);
+    try {
+        const param = req.params.id;
+        await productContainer.deleteById(param);
+        res.send(`producto con id: ${param} eliminado exitosamente`);
+    } catch (err) {
+        res.send(`${err}`);
+    }
 });
 
 app.use('/api/products', productRouter);

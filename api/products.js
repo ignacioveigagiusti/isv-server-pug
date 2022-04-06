@@ -32,7 +32,7 @@ class Products {
             console.log('Escritura exitosa!');
         }
         catch(err){
-            throw new Error(`Error: ${err}`)
+            throw new Error(`${err}`)
         }
     }
 
@@ -42,17 +42,20 @@ class Products {
             if (getContent == '') {
                 getContent = '[]';
             }
-            let prevContent = JSON.parse(getContent); 
+            let prevContent = JSON.parse(getContent);
+            let IDwasFound = 0;
             for (const i in prevContent) {
                 if (prevContent[i].id == productId) {
+                    IDwasFound = 1;
                     prevContent[i] = { id: parseInt(productId), ...product};
                 }
             }
+            if (IDwasFound == 0) throw 'ID was not found';
             await fs.promises.writeFile(`${this.fileToWork}`, JSON.stringify(prevContent,null,2));
             console.log('Escritura exitosa!');
         }
         catch(err){
-            throw new Error(`Error: ${err}`)
+            throw new Error(`${err}`)
         }
     }
 
@@ -60,10 +63,17 @@ class Products {
         try{
             const getContent = await fs.promises.readFile(`${this.fileToWork}`, 'utf8');
             const content = JSON.parse(getContent); 
-            return content[num-1]
+            let IDwasFound = 0;
+            for (const i in content) {
+                if (content[i].id == num) {
+                    IDwasFound = 1;
+                    return content[i]
+                }
+            }
+            if (IDwasFound == 0) throw 'ID does not exist!'
         }
         catch(err){
-            throw new Error(`Error: ${err}`)
+            throw new Error(`${err}`)
         }
     }
 
@@ -74,7 +84,7 @@ class Products {
             return content
         }
         catch(err){
-            throw new Error(`Error: ${err}`)
+            throw new Error(`${err}`)
         }
     }
 
@@ -83,16 +93,23 @@ class Products {
             const getContent = await fs.promises.readFile(`${this.fileToWork}`, 'utf-8');
             const prevContent = JSON.parse(getContent); 
             const newContent = [];
+            let IDwasFound = 0;
             for (let i = 0; i < prevContent.length; i++) {
                 if (prevContent[i].id != num) {
                     newContent.push(prevContent[i]);
+                } 
+                else {
+                    if (prevContent[i].id == num) {
+                        IDwasFound = 1;
+                    }
                 }
             }
+            if (IDwasFound == 0) throw 'ID does not exist!';
             await fs.promises.writeFile(`${this.fileToWork}`, JSON.stringify(newContent,null,2))
             console.log('Escritura exitosa!')
         }
         catch(err){
-            throw new Error(`Error: ${err}`)
+            throw new Error(`${err}`)
         }
     }
 
@@ -101,7 +118,7 @@ class Products {
             await fs.promises.writeFile(`${this.fileToWork}`, '[]')
             console.log('Escritura exitosa!')
         } catch (err) {
-            throw new Error(`Error: ${err}`) 
+            throw new Error(`${err}`) 
         }
 
     }
