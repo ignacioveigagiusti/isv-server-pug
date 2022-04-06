@@ -30,6 +30,7 @@ class Products {
             newContent.push(newProduct);
             await fs.promises.writeFile(`${this.fileToWork}`, JSON.stringify(newContent,null,2));
             console.log('Escritura exitosa!');
+            return newProduct;
         }
         catch(err){
             throw new Error(`${err}`)

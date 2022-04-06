@@ -41,13 +41,16 @@ productRouter.get('/:id', async (req, res) => {
 
 productRouter.post('/', async (req, res) => {
     try {
-        let title = req.body.title;
+        if( req.body.title == undefined || req.body.price === null || req.body.thumbnail == undefined || req.body.title == '' || req.body.price === '' || req.body.thumbnail == '' ) {
+            throw 'Missing data. Product needs Title, Price and Thumbnail.'
+        }
+            let title = req.body.title;
         let price = req.body.price;
         let thumbnail = req.body.thumbnail;
         price = parseFloat(price);
         const newProduct = {title:title, price:price, thumbnail:thumbnail};
-        await productContainer.save(newProduct);
-        res.send(`Producto añadido: ${JSON.stringify(newProduct)}`);
+        const savedProduct = await productContainer.save(newProduct);
+        res.send(`Producto añadido: ${JSON.stringify(savedProduct)}`);
     } catch (err) {
         res.send(`${err}`);
     }
@@ -56,7 +59,7 @@ productRouter.post('/', async (req, res) => {
 productRouter.put('/', (req,res) => {
     try {
         let putId = req.body.id;
-        res.redirect(307, `products/${putId}?_method=PUT`)
+        res.redirect(307, `/${putId}?_method=PUT`)
     } catch (err) {
         res.send(`${err}`);
     }
@@ -65,13 +68,22 @@ productRouter.put('/', (req,res) => {
 productRouter.put('/:id', async (req, res) => {
     try {
         const param = req.params.id;
-        let title = req.body.title;
-        let price = req.body.price;
-        let thumbnail = req.body.thumbnail;
-        price = parseFloat(price);
-        const newProduct = {title:title, price:price, thumbnail:thumbnail};
+        let newTitle;
+        let newPrice;
+        let newThumbnail;
+        if (typeof req.body.title === 'string' && req.body.title !== '') {
+            newTitle = req.body.title;
+        }
+        if (req.body.title != null) {
+            newPrice = req.body.price;
+        }    
+        if (typeof req.body.thumbnail === 'string' && req.body.thumbnail !== '') {   
+            newThumbnail = req.body.thumbnail;
+        }
+        newPrice = parseFloat(newPrice);
+        const newProduct = {title:newTitle, price:newPrice, thumbnail:newThumbnail};
         await productContainer.edit(param, newProduct);
-        res.json(newProduct);
+        res.json({id:param, ...newProduct});
     } catch (err) {
         res.send(`${err}`);
     }
