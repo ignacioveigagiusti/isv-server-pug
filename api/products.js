@@ -28,13 +28,35 @@ class Products {
             const newProduct = {id: newID, ...product};
             let newContent = prevContent
             newContent.push(newProduct);
-            await fs.promises.writeFile(`${this.fileToWork}`, JSON.stringify(newContent));
+            await fs.promises.writeFile(`${this.fileToWork}`, JSON.stringify(newContent,null,2));
             console.log('Escritura exitosa!');
         }
         catch(err){
             throw new Error(`Error: ${err}`)
         }
     }
+
+    async edit(id, product) {
+        try{
+            let getContent = await fs.promises.readFile(`${this.fileToWork}`, 'utf8');
+            if (getContent == '') {
+                getContent = '[]';
+            }
+            let prevContent = JSON.parse(getContent); 
+            for (const i in prevContent) {
+                if (prevContent[i].id == id) {
+                    prevContent[i] = product;
+                    console.log(prevContent[i]);
+                }
+            }
+            await fs.promises.writeFile(`${this.fileToWork}`, JSON.stringify(prevContent,null,2));
+            console.log('Escritura exitosa!');
+        }
+        catch(err){
+            throw new Error(`Error: ${err}`)
+        }
+    }
+
     async getById(num) {
         try{
             const getContent = await fs.promises.readFile(`${this.fileToWork}`, 'utf8');
@@ -45,6 +67,7 @@ class Products {
             throw new Error(`Error: ${err}`)
         }
     }
+
     async getAll() {
         try{
             const getContent = await fs.promises.readFile(`${this.fileToWork}`,);
@@ -55,23 +78,25 @@ class Products {
             throw new Error(`Error: ${err}`)
         }
     }
+
     async deleteById(num) {
         try{
             const getContent = await fs.promises.readFile(`${this.fileToWork}`, 'utf-8');
             const prevContent = JSON.parse(getContent); 
             const newContent = [];
             for (let i = 0; i < prevContent.length; i++) {
-                if (prevContent[i].id !== num) {
+                if (prevContent[i].id != num) {
                     newContent.push(prevContent[i]);
                 }
             }
-            await fs.promises.writeFile(`${this.fileToWork}`, JSON.stringify(newContent))
+            await fs.promises.writeFile(`${this.fileToWork}`, JSON.stringify(newContent,null,2))
             console.log('Escritura exitosa!')
         }
         catch(err){
             throw new Error(`Error: ${err}`)
         }
     }
+
     async deleteAll() {
         try {
             await fs.promises.writeFile(`${this.fileToWork}`, '[]')
