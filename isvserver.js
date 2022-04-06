@@ -1,5 +1,6 @@
 const express = require('express');
 const { Router } = express;
+const methodOverride = require('method-override')
 const app = express();
 
 const bodyParser = require('body-parser');
@@ -12,6 +13,7 @@ const productContainer = new Products('./api/products.json');
 productRouter.use(express.json());
 productRouter.use(express.urlencoded({ extended: true }));
 productRouter.use(bodyParser.urlencoded({ extended: false }));
+productRouter.use(methodOverride('_method'))
 
 app.get('/', (req, res) => {
     res.sendFile('./public/index.html', {root:__dirname});
@@ -37,6 +39,11 @@ productRouter.post('/', async (req, res) => {
     await productContainer.save(newProduct);
     res.send(`Producto añadido: ${JSON.stringify(newProduct)}`);
 });
+
+productRouter.put('/', (req,res) => {
+    let putId = req.body.id;
+    res.redirect(307, `products/${putId}?_method=PUT`)
+})
 
 productRouter.put('/:id', async (req, res) => {
     const param = req.params.id;

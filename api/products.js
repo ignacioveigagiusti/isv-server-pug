@@ -36,7 +36,7 @@ class Products {
         }
     }
 
-    async edit(id, product) {
+    async edit(productId, product) {
         try{
             let getContent = await fs.promises.readFile(`${this.fileToWork}`, 'utf8');
             if (getContent == '') {
@@ -44,9 +44,8 @@ class Products {
             }
             let prevContent = JSON.parse(getContent); 
             for (const i in prevContent) {
-                if (prevContent[i].id == id) {
-                    prevContent[i] = product;
-                    console.log(prevContent[i]);
+                if (prevContent[i].id == productId) {
+                    prevContent[i] = { id: parseInt(productId), ...product};
                 }
             }
             await fs.promises.writeFile(`${this.fileToWork}`, JSON.stringify(prevContent,null,2));

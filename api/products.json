@@ -18,8 +18,9 @@
     "thumbnail": "https://isvshop.netlify.app/assets/durlock.png"
   },
   {
-    "title": "12341",
-    "price": 100,
-    "thumbnail": "url"
+    "id": 4,
+    "title": "",
+    "price": 0,
+    "thumbnail": ""
   }
 ]
