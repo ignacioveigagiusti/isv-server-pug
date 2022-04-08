@@ -131,7 +131,6 @@ class Products {
         } catch (err) {
             throw new Error(`${err}`) 
         }
-
     }
 }
 
