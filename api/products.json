@@ -24,7 +24,25 @@
     "thumbnail": "\"https://isvshop.netlify.app/assets/durlock.png\""
   },
   {
+    "id": 7,
+    "title": "Another Product (test)",
+    "price": 100,
+    "thumbnail": "\"https://isvshop.netlify.app/assets/durlock.png\""
+  },
+  {
     "id": 5,
+    "title": "Another Product (test)",
+    "price": 100,
+    "thumbnail": "\"https://isvshop.netlify.app/assets/durlock.png\""
+  },
+  {
+    "id": 6,
+    "title": "Another Product (test)",
+    "price": 100,
+    "thumbnail": "\"https://isvshop.netlify.app/assets/durlock.png\""
+  },
+  {
+    "id": 8,
     "title": "Another Product (test)",
     "price": 100,
     "thumbnail": "\"https://isvshop.netlify.app/assets/durlock.png\""

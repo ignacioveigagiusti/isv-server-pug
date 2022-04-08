@@ -1,10 +1,11 @@
 const express = require('express');
 const { Router } = express;
-const methodOverride = require('method-override')
-const app = express();
 
+// IMPORTANT! body-parser and method-override must be installed with npm for everything to run correctly
+const methodOverride = require('method-override')
 const bodyParser = require('body-parser');
 
+const app = express();
 const productRouter = new Router();
 
 const Products = require('./api/products.js');
@@ -15,20 +16,22 @@ productRouter.use(express.urlencoded({ extended: true }));
 productRouter.use(bodyParser.urlencoded({ extended: false }));
 productRouter.use(methodOverride('_method'))
 
+// public/index.html is sent when performing a get on the root directory
 app.get('/', (req, res) => {
     res.sendFile('./public/index.html', {root:__dirname});
 })
 
+// get all products from /api/products
 productRouter.get('/', async (req, res) => {
     try {
         const allProducts = await productContainer.getAll();
         res.json(allProducts);
     } catch (err) {
         res.send(`${err}`);
-    }
-    
+    }    
 });
 
+// get one product by id from /api/products/:id
 productRouter.get('/:id', async (req, res) => {
     try {
         const param = req.params.id;
@@ -39,6 +42,7 @@ productRouter.get('/:id', async (req, res) => {
     }
 });
 
+// add one product with a post method to /api/products
 productRouter.post('/', async (req, res) => {
     try {
         if( req.body.title == undefined || req.body.price === null || req.body.thumbnail == undefined || req.body.title == '' || req.body.price === '' || req.body.thumbnail == '' ) {
@@ -56,6 +60,8 @@ productRouter.post('/', async (req, res) => {
     }
 });
 
+// takes a post method from the html form to edit files and uses method override to turn it into a put method with the product id 
+// this method cannot be tested with postman or a direct put method, it only works when using a form in an html and then posting it with the PUT method in the URL
 productRouter.put('/', (req,res) => {
     try {
         let putId = req.body.id;
@@ -65,6 +71,7 @@ productRouter.put('/', (req,res) => {
     }
 })
 
+// PUT method to edit a product by ID (this is the one that can be tested with postman)
 productRouter.put('/:id', async (req, res) => {
     try {
         const param = req.params.id;
@@ -89,6 +96,7 @@ productRouter.put('/:id', async (req, res) => {
     }
 });
 
+// Delete a product by ID
 productRouter.delete('/:id', async (req, res) => {
     try {
         const param = req.params.id;
@@ -99,8 +107,10 @@ productRouter.delete('/:id', async (req, res) => {
     }
 });
 
+//Router
 app.use('/api/products', productRouter);
 
+//Connection
 const PORT = 8080;
 const server = app.listen(PORT, () => {
     console.log(`Servidor inicializado en el puerto ${server.address().port}`)
