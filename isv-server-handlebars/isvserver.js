@@ -1,5 +1,6 @@
 const express = require('express');
 const { Router } = express;
+const fs = require('fs');
 
 // IMPORTANT! body-parser and method-override must be installed with npm for everything to run correctly
 const methodOverride = require('method-override');
@@ -9,6 +10,7 @@ const app = express();
 
 // This server will use handlebars for templating
 const handlebars = require('express-handlebars');
+const hbs = require("handlebars");
 
 const productRouter = new Router();
 
@@ -29,13 +31,19 @@ app.engine('hbs',
         partialsDir: __dirname + 'views/partials/'
     })
 );
+const head = hbs.compile(fs.readFileSync(__dirname + '/views/partials/head.hbs').toString('utf-8'));
+hbs.registerPartial('head', head)
+const header = hbs.compile(fs.readFileSync(__dirname + '/views/partials/header.hbs').toString('utf-8'));
+hbs.registerPartial('header', header)
+const footer = hbs.compile(fs.readFileSync(__dirname + '/views/partials/footer.hbs').toString('utf-8'));
+hbs.registerPartial('footer', footer)
 app.set('view engine', 'hbs');
 app.set('views', './views');
 app.use(express.static('public'));
 
 // public/index.html is sent when performing a get on the root directory
 app.get('/', (req, res) => {
-    res.sendFile('./public/index.html', {root:__dirname});
+    res.render('main');
 })
 
 app.post('/', async (req, res) => {
@@ -62,7 +70,7 @@ app.get('/products', async (req, res) => {
     } catch (err) {
         res.send(`${err}`);
     }
-    res.render('main', {productList: allProducts});
+    res.render('main', {layout: 'products.hbs', productList: allProducts});
 })
 
 // get all products from /api/products
