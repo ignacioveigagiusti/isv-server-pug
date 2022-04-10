@@ -7,9 +7,6 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-// This server will use handlebars for templating
-const handlebars = require('express-handlebars');
-
 const productRouter = new Router();
 
 const Products = require('./api/products.js');
@@ -20,16 +17,8 @@ productRouter.use(express.urlencoded({ extended: true }));
 productRouter.use(bodyParser.urlencoded({ extended: false }));
 productRouter.use(methodOverride('_method'));
 
-// Handlebars settings
-app.engine('hbs', 
-    handlebars({
-        extname: '.hbs',
-        defaultLayout: 'index.hbs',
-        layoutsDir: __dirname + '/views/layouts',
-        partialsDir: __dirname + 'views/partials/'
-    })
-);
-app.set('view engine', 'hbs');
+// Ejs setup
+app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(express.static('public'));
 
@@ -62,7 +51,7 @@ app.get('/products', async (req, res) => {
     } catch (err) {
         res.send(`${err}`);
     }
-    res.render('main', {productList: allProducts});
+    res.render('pages/products', {productList: allProducts});
 })
 
 // get all products from /api/products

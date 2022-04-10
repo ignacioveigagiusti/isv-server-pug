@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <%- include('../partials/head'); %>
+</head>
+<body>
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <main class="container">
+        <section>
+            <%- include('../partials/main', {products: productList}); %>                                               
+        </section>
+    </main>
+    <footer>
+        <%- include('../partials/footer'); %> 
+    </footer>
+</body>
+</html>
