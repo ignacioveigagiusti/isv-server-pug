@@ -24,7 +24,7 @@ app.use(express.static('public'));
 
 // public/index.html is sent when performing a get on the root directory
 app.get('/', (req, res) => {
-    res.sendFile('./public/index.html', {root:__dirname});
+    res.render('pages/index');
 })
 
 app.post('/', async (req, res) => {

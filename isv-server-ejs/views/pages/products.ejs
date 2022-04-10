@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <%- include('../partials/head'); %>
-</head>
+<%- include('../partials/head'); %>
 <body>
-    <header>
-        <%- include('../partials/header'); %>
-    </header>
+    <%- include('../partials/header'); %>
     <main class="container">
         <section>
-            <%- include('../partials/main', {products: productList}); %>                                               
+            <%- include('../partials/productList', {products: productList}); %>                                               
         </section>
     </main>
-    <footer>
-        <%- include('../partials/footer'); %> 
-    </footer>
+    <%- include('../partials/footer'); %> 
 </body>
 </html>
