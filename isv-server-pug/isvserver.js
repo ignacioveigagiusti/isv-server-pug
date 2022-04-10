@@ -24,7 +24,7 @@ app.use(express.static('public'));
 
 // public/index.html is sent when performing a get on the root directory
 app.get('/', (req, res) => {
-    res.sendFile('./public/index.html', {root:__dirname});
+    res.render('pages/index.pug');
 })
 
 app.post('/', async (req, res) => {
@@ -49,9 +49,9 @@ app.get('/products', async (req, res) => {
     try {
         allProducts = await productContainer.getAll();
     } catch (err) {
-        res.send(`${err}`);
+        res.render('pages/productView.pug', {error: err});
     }
-    res.render('layout.pug', {productList: allProducts});
+    res.render('pages/productView.pug', {productList: allProducts});
 })
 
 // get all products from /api/products

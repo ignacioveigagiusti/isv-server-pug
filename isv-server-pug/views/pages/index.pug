@@ -1,0 +1,30 @@
+html
+    include ../partials/head.pug 
+body
+    include ../partials/header.pug
+    <main class="container">
+        <section>
+            <h2>Add a Product</h2>
+            <form action="/" method="POST">
+                <div class="form-group">
+                    p Name: <input type="text" name="title" class="form-control">
+                    p Price: <input type="text" name="price" class="form-control">
+                    p Image URL: <input type="text" name="thumbnail" class="form-control">
+                    <button class="btn btn-primary">Send</button>
+                </div>
+            </form>
+        </section>
+        <section>
+            <h2>Edit Existing Product</h2>
+            <form action="/api/products?_method=PUT" method="POST">
+                <div class="form-group">
+                    p ID: <input type="text" name="id" class="form-control">
+                    p Name: <input type="text" name="title" class="form-control">
+                    p Price: <input type="text" name="price" class="form-control">
+                    p Image URL: <input type="text" name="thumbnail" class="form-control">
+                    <button class="btn btn-primary">Send</button>
+                </div>
+            </form>
+        </section>                                 
+    </main>
+    include ../partials/footer.pug 
