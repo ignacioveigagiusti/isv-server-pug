@@ -2,10 +2,14 @@ const express = require('express');
 const { Router } = express;
 
 // IMPORTANT! body-parser and method-override must be installed with npm for everything to run correctly
-const methodOverride = require('method-override')
+const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 
 const app = express();
+
+// This server will use handlebars for templating
+const handlebars = require('express-handlebars');
+
 const productRouter = new Router();
 
 const Products = require('./api/products.js');
@@ -14,11 +18,51 @@ const productContainer = new Products('./api/products.json');
 productRouter.use(express.json());
 productRouter.use(express.urlencoded({ extended: true }));
 productRouter.use(bodyParser.urlencoded({ extended: false }));
-productRouter.use(methodOverride('_method'))
+productRouter.use(methodOverride('_method'));
+
+// Handlebars settings
+app.engine('hbs', 
+    handlebars({
+        extname: '.hbs',
+        defaultLayout: 'index.hbs',
+        layoutsDir: __dirname + '/views/layouts',
+        partialsDir: __dirname + 'views/partials/'
+    })
+);
+app.set('view engine', 'hbs');
+app.set('views', './views');
+app.use(express.static('public'));
 
 // public/index.html is sent when performing a get on the root directory
 app.get('/', (req, res) => {
     res.sendFile('./public/index.html', {root:__dirname});
+})
+
+app.post('/', async (req, res) => {
+    try {
+        if( req.body.title == undefined || req.body.price === null || req.body.thumbnail == undefined || req.body.title == '' || req.body.price === '' || req.body.thumbnail == '' ) {
+            throw 'Missing data. Product needs Title, Price and Thumbnail.'
+        }
+        let title = req.body.title;
+        let price = req.body.price;
+        let thumbnail = req.body.thumbnail;
+        price = parseFloat(price);
+        const newProduct = {title:title, price:price, thumbnail:thumbnail};
+        const savedProduct = await productContainer.save(newProduct);
+        res.send(`Producto añadido: ${JSON.stringify(savedProduct)}`);
+    } catch (err) {
+        res.send(`${err}`);
+    }
+})
+
+app.get('/products', async (req, res) => {
+    let allProducts = []
+    try {
+        allProducts = await productContainer.getAll();
+    } catch (err) {
+        res.send(`${err}`);
+    }
+    res.render('main', {productList: allProducts});
 })
 
 // get all products from /api/products
@@ -48,7 +92,7 @@ productRouter.post('/', async (req, res) => {
         if( req.body.title == undefined || req.body.price === null || req.body.thumbnail == undefined || req.body.title == '' || req.body.price === '' || req.body.thumbnail == '' ) {
             throw 'Missing data. Product needs Title, Price and Thumbnail.'
         }
-            let title = req.body.title;
+        let title = req.body.title;
         let price = req.body.price;
         let thumbnail = req.body.thumbnail;
         price = parseFloat(price);
@@ -64,6 +108,7 @@ productRouter.post('/', async (req, res) => {
 // this method cannot be tested with postman or a direct put method, it only works when using a form in an html and then posting it with the PUT method in the URL
 productRouter.put('/', (req,res) => {
     try {
+
         let putId = req.body.id;
         res.redirect(307, `/${putId}?_method=PUT`)
     } catch (err) {

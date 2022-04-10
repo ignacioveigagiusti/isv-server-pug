@@ -21,12 +21,12 @@
     "id": 4,
     "title": "New Product (test)",
     "price": 100,
-    "thumbnail": "\"https://isvshop.netlify.app/assets/durlock.png\""
+    "thumbnail": "https://isvshop.netlify.app/assets/logoISV.png"
   },
   {
     "id": 7,
     "title": "Another Product (test)",
     "price": 100,
-    "thumbnail": "\"https://isvshop.netlify.app/assets/durlock.png\""
+    "thumbnail": "https://isvshop.netlify.app/assets/logoISV.png"
   }
 ]
