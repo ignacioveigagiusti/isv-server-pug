@@ -15,9 +15,19 @@
                 </div>
             </form>
         </section>
+        <% if (successfulAdd) { %>
+            <div class="alert alert-success" role="alert">
+                'Product added successfully!'
+            </div>
+        <% }; %>
+        <% if (unsuccessfulAdd) { %>
+            <div class="alert alert-danger" role="alert">
+                'Product could not be added: <%= addError %>'
+            </div>
+        <% }; %>
         <section>
             <h2>Edit Existing Product</h2>
-            <form action="/api/products?_method=PUT" method="POST">
+            <form action="/edit" method="POST">
                 <div class="form-group">
                     ID: <input type="text" name="id" class="form-control">
                     Name: <input type="text" name="title" class="form-control">
@@ -27,6 +37,16 @@
                 </div>
             </form>
         </section>
+        <% if (successfulEdit) { %>    
+            <div class="alert alert-success" role="alert">
+                'Product edited successfully: <%= editedProduct %>'
+            </div>
+        <% }; %>
+        <% if (unsuccessfulEdit) { %>    
+            <div class="alert alert-danger" role="alert">
+                'Product could not be edited: <%= editError %>'
+            </div>
+        <% } %>
     </main>
     <%- include('../partials/footer'); %> 
 </body>

@@ -1,5 +1,6 @@
 @charset "UTF-8";
 @import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap");
+
 * {
   Margin: 0;
   padding: 0;
@@ -7,7 +8,7 @@
   font-family: 'Open Sans', sans-serif; 
 }
 
-h1 {
+.container h1 {
     padding: 1rem 0;
     margin: 0;
     text-align: center;
@@ -18,7 +19,7 @@ h1 {
     line-height: 3rem; 
 }
 
-h2 {
+.container h2 {
     text-align: center;
     color: midnightblue;
     font: bold 2rem "Open Sans", sans-serif;

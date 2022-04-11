@@ -2,9 +2,6 @@ const express = require('express');
 const { Router } = express;
 const fs = require('fs');
 
-// IMPORTANT! method-override must be installed with npm for everything to run correctly
-const methodOverride = require('method-override');
-
 const app = express();
 
 const productRouter = new Router();
@@ -14,10 +11,8 @@ const productContainer = new Products('./api/products.json');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(methodOverride('_method'));
 productRouter.use(express.json());
 productRouter.use(express.urlencoded({ extended: false }));
-productRouter.use(methodOverride('_method'));
 
 // Pug settings for templating
 app.set('view engine', 'pug');

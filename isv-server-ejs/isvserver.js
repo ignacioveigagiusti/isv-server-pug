@@ -1,10 +1,6 @@
 const express = require('express');
 const { Router } = express;
 
-// IMPORTANT! body-parser and method-override must be installed with npm for everything to run correctly
-const methodOverride = require('method-override');
-const bodyParser = require('body-parser');
-
 const app = express();
 
 const productRouter = new Router();
@@ -12,19 +8,19 @@ const productRouter = new Router();
 const Products = require('./api/products.js');
 const productContainer = new Products('./api/products.json');
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 productRouter.use(express.json());
 productRouter.use(express.urlencoded({ extended: true }));
-productRouter.use(bodyParser.urlencoded({ extended: false }));
-productRouter.use(methodOverride('_method'));
 
 // Ejs setup
 app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(express.static('public'));
 
-// public/index.html is sent when performing a get on the root directory
+// index page is sent when performing a get on the root directory
 app.get('/', (req, res) => {
-    res.render('pages/index');
+    res.render('pages/index', {successfulAdd: false, unsuccessfulAdd: false, successfulEdit: false, unsuccessfulEdit: false});
 })
 
 app.post('/', async (req, res) => {
@@ -38,11 +34,41 @@ app.post('/', async (req, res) => {
         price = parseFloat(price);
         const newProduct = {title:title, price:price, thumbnail:thumbnail};
         const savedProduct = await productContainer.save(newProduct);
-        res.send(`Producto añadido: ${JSON.stringify(savedProduct)}`);
+        res.render('pages/index', {addedProduct: JSON.stringify(savedProduct), successfulAdd: true, unsuccessfulAdd: false, successfulEdit: false, unsuccessfulEdit: false});
     } catch (err) {
-        res.send(`${err}`);
+        res.render('pages/index', {unsuccessfulAdd: true, successfulAdd: false, successfulEdit: false, unsuccessfulEdit: false, addError: err});
     }
 })
+
+app.post('/edit', async (req, res) => {
+    try {
+        let putId;
+        if (req.body.id != null && req.body.id !== '') {
+            putId = req.body.id;
+        }
+        else{
+            throw 'No ID was provided';
+        }
+        const prevProduct = await productContainer.getById(putId);
+        let newTitle = prevProduct.title;
+        let newPrice = prevProduct.price;
+        let newThumbnail = prevProduct.thumbnail;
+        if (typeof req.body.title === 'string' && req.body.title !== '') {
+            newTitle = req.body.title;
+        }
+        if (parseFloat(req.body.price) != null && req.body.price !== '') {
+            newPrice = parseFloat(req.body.price);
+        }    
+        if (typeof req.body.thumbnail === 'string' && req.body.thumbnail !== '') {   
+            newThumbnail = req.body.thumbnail;
+        }
+        const newProduct = {title:newTitle, price:newPrice, thumbnail:newThumbnail};
+        const editProduct = await productContainer.edit(putId, newProduct);
+        res.render('pages/index', {successfulEdit: true, unsuccessfulEdit: false, successfulAdd: false, unsuccessfulAdd: false, editedProduct: JSON.stringify(editProduct, null, 2)});
+    } catch (err) {
+        res.render('pages/index', {unsuccessfulEdit: true, successfulEdit: false, successfulAdd: false, unsuccessfulAdd: false, editError: err});
+    }
+});
 
 app.get('/products', async (req, res) => {
     let allProducts = []
@@ -92,18 +118,6 @@ productRouter.post('/', async (req, res) => {
         res.send(`${err}`);
     }
 });
-
-// takes a post method from the html form to edit files and uses method override to turn it into a put method with the product id 
-// this method cannot be tested with postman or a direct put method, it only works when using a form in an html and then posting it with the PUT method in the URL
-productRouter.put('/', (req,res) => {
-    try {
-
-        let putId = req.body.id;
-        res.redirect(307, `/${putId}?_method=PUT`)
-    } catch (err) {
-        res.send(`${err}`);
-    }
-})
 
 // PUT method to edit a product by ID (this is the one that can be tested with postman)
 productRouter.put('/:id', async (req, res) => {

@@ -32,6 +32,7 @@ class Products {
             const newProduct = {id: newID, ...product};
             let newContent = prevContent
             newContent.push(newProduct);
+            await newContent.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
             await fs.promises.writeFile(`${this.fileToWork}`, JSON.stringify(newContent,null,2));
             console.log('Escritura exitosa!');
             return newProduct;
@@ -60,6 +61,7 @@ class Products {
             if (IDwasFound == 0) throw 'ID was not found';
             await fs.promises.writeFile(`${this.fileToWork}`, JSON.stringify(prevContent,null,2));
             console.log('Escritura exitosa!');
+            return { id: parseInt(productId), ...product}
         }
         catch(err){
             throw new Error(`${err}`)
