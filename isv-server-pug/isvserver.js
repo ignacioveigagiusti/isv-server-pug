@@ -1,9 +1,9 @@
 const express = require('express');
 const { Router } = express;
+const fs = require('fs');
 
-// IMPORTANT! body-parser and method-override must be installed with npm for everything to run correctly
+// IMPORTANT! method-override must be installed with npm for everything to run correctly
 const methodOverride = require('method-override');
-const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -12,9 +12,11 @@ const productRouter = new Router();
 const Products = require('./api/products.js');
 const productContainer = new Products('./api/products.json');
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(methodOverride('_method'));
 productRouter.use(express.json());
-productRouter.use(express.urlencoded({ extended: true }));
-productRouter.use(bodyParser.urlencoded({ extended: false }));
+productRouter.use(express.urlencoded({ extended: false }));
 productRouter.use(methodOverride('_method'));
 
 // Pug settings for templating
@@ -38,11 +40,42 @@ app.post('/', async (req, res) => {
         price = parseFloat(price);
         const newProduct = {title:title, price:price, thumbnail:thumbnail};
         const savedProduct = await productContainer.save(newProduct);
-        res.send(`Producto añadido: ${JSON.stringify(savedProduct)}`);
+        res.render('pages/index.pug', {addedProduct: JSON.stringify(savedProduct), successfulAdd: true});
     } catch (err) {
-        res.send(`${err}`);
+        res.render('pages/index.pug', {unsuccessfulAdd: true, addError: err});
     }
 })
+
+app.post('/edit', async (req, res) => {
+    try {
+        let putId;
+        if (req.body.id != null && req.body.id !== '') {
+            putId = req.body.id;
+        }
+        else{
+            throw 'No ID was provided';
+        }
+        const prevProduct = await productContainer.getById(putId);
+        let newTitle = prevProduct.title;
+        let newPrice = prevProduct.price;
+        let newThumbnail = prevProduct.thumbnail;
+        if (typeof req.body.title === 'string' && req.body.title !== '') {
+            newTitle = req.body.title;
+        }
+        if (req.body.title != null) {
+            newPrice = req.body.price;
+        }    
+        if (typeof req.body.thumbnail === 'string' && req.body.thumbnail !== '') {   
+            newThumbnail = req.body.thumbnail;
+        }
+        newPrice = parseFloat(newPrice);
+        const newProduct = {title:newTitle, price:newPrice, thumbnail:newThumbnail};
+        const editProduct = await productContainer.edit(putId, newProduct);
+        res.render('pages/index.pug', {successfulEdit: true, editedProduct: JSON.stringify(editProduct, null, 2)});
+    } catch (err) {
+        res.render('pages/index.pug', {unsuccessfulEdit: true, editError: err});
+    }
+});
 
 app.get('/products', async (req, res) => {
     let allProducts = []
@@ -93,25 +126,14 @@ productRouter.post('/', async (req, res) => {
     }
 });
 
-// takes a post method from the html form to edit files and uses method override to turn it into a put method with the product id 
-// this method cannot be tested with postman or a direct put method, it only works when using a form in an html and then posting it with the PUT method in the URL
-productRouter.put('/', (req,res) => {
-    try {
-
-        let putId = req.body.id;
-        res.redirect(307, `/${putId}?_method=PUT`)
-    } catch (err) {
-        res.send(`${err}`);
-    }
-})
-
 // PUT method to edit a product by ID (this is the one that can be tested with postman)
 productRouter.put('/:id', async (req, res) => {
     try {
         const param = req.params.id;
-        let newTitle;
-        let newPrice;
-        let newThumbnail;
+        const prevProduct = productContainer.getById(param);
+        let newTitle = prevProduct.title;
+        let newPrice = prevProduct.price;
+        let newThumbnail = prevProduct.thumbnail;
         if (typeof req.body.title === 'string' && req.body.title !== '') {
             newTitle = req.body.title;
         }
