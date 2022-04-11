@@ -1,7 +1,12 @@
 const express = require('express');
 const { Router } = express;
+const fs = require('fs');
+const { Server: IOServer } = require('socket.io');
+const { Server: HttpServer } = require('http');
 
 const app = express();
+const httpServer = new HttpServer(app);
+const io = new IOServer(httpServer);
 
 const productRouter = new Router();
 
@@ -9,18 +14,18 @@ const Products = require('./api/products.js');
 const productContainer = new Products('./api/products.json');
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 productRouter.use(express.json());
-productRouter.use(express.urlencoded({ extended: true }));
+productRouter.use(express.urlencoded({ extended: false }));
 
-// Ejs setup
-app.set('view engine', 'ejs');
+// Pug settings for templating
+app.set('view engine', 'pug');
 app.set('views', './views');
 app.use(express.static('public'));
 
-// index page is sent when performing a get on the root directory
+// public/index.html is sent when performing a get on the root directory
 app.get('/', (req, res) => {
-    res.render('pages/index', {successfulAdd: false, unsuccessfulAdd: false, successfulEdit: false, unsuccessfulEdit: false});
+    res.render('pages/index.pug');
 })
 
 app.post('/', async (req, res) => {
@@ -34,9 +39,9 @@ app.post('/', async (req, res) => {
         price = parseFloat(price);
         const newProduct = {title:title, price:price, thumbnail:thumbnail};
         const savedProduct = await productContainer.save(newProduct);
-        res.render('pages/index', {addedProduct: JSON.stringify(savedProduct), successfulAdd: true, unsuccessfulAdd: false, successfulEdit: false, unsuccessfulEdit: false});
+        res.render('pages/index.pug', {addedProduct: JSON.stringify(savedProduct), successfulAdd: true});
     } catch (err) {
-        res.render('pages/index', {unsuccessfulAdd: true, successfulAdd: false, successfulEdit: false, unsuccessfulEdit: false, addError: err});
+        res.render('pages/index.pug', {unsuccessfulAdd: true, addError: err});
     }
 })
 
@@ -64,9 +69,9 @@ app.post('/edit', async (req, res) => {
         }
         const newProduct = {title:newTitle, price:newPrice, thumbnail:newThumbnail};
         const editProduct = await productContainer.edit(putId, newProduct);
-        res.render('pages/index', {successfulEdit: true, unsuccessfulEdit: false, successfulAdd: false, unsuccessfulAdd: false, editedProduct: JSON.stringify(editProduct, null, 2)});
+        res.render('pages/index.pug', {successfulEdit: true, editedProduct: JSON.stringify(editProduct, null, 2)});
     } catch (err) {
-        res.render('pages/index', {unsuccessfulEdit: true, successfulEdit: false, successfulAdd: false, unsuccessfulAdd: false, editError: err});
+        res.render('pages/index.pug', {unsuccessfulEdit: true, editError: err});
     }
 });
 
@@ -75,9 +80,9 @@ app.get('/products', async (req, res) => {
     try {
         allProducts = await productContainer.getAll();
     } catch (err) {
-        res.send(`${err}`);
+        res.render('pages/productView.pug', {error: err});
     }
-    res.render('pages/products', {productList: allProducts});
+    res.render('pages/productView.pug', {productList: allProducts});
 })
 
 // get all products from /api/products
@@ -123,9 +128,10 @@ productRouter.post('/', async (req, res) => {
 productRouter.put('/:id', async (req, res) => {
     try {
         const param = req.params.id;
-        let newTitle;
-        let newPrice;
-        let newThumbnail;
+        const prevProduct = productContainer.getById(param);
+        let newTitle = prevProduct.title;
+        let newPrice = prevProduct.price;
+        let newThumbnail = prevProduct.thumbnail;
         if (typeof req.body.title === 'string' && req.body.title !== '') {
             newTitle = req.body.title;
         }
@@ -160,7 +166,19 @@ app.use('/api/products', productRouter);
 
 //Connection
 const PORT = 8080;
-const server = app.listen(PORT, () => {
-    console.log(`Servidor inicializado en el puerto ${server.address().port}`)
+httpServer.listen(PORT, () => {
+    console.log(`Servidor inicializado en el puerto ${httpServer.address().port}`)
 });
-server.on("error", err => console.log(`Error en el servidor: ${err}`));
+httpServer.on("error", err => console.log(`Error en el servidor: ${err}`));
+
+io.on('connection', async (socket) => {
+    console.log('Client connected');
+    const messages = JSON.parse(await fs.promises.readFile('./api/messages.json', 'utf8'));
+    console.log(typeof messages);
+    socket.emit('messages', messages);
+    socket.on('newMessage', async data => {
+        messages.push(data);
+        await fs.promises.writeFile('./api/messages.json', JSON.stringify(messages,null,2));
+        io.sockets.emit('messages', messages);
+    });
+})
