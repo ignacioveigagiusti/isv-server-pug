@@ -62,13 +62,12 @@ app.post('/edit', async (req, res) => {
         if (typeof req.body.title === 'string' && req.body.title !== '') {
             newTitle = req.body.title;
         }
-        if (req.body.title != null) {
-            newPrice = req.body.price;
+        if (parseFloat(req.body.price) != null && req.body.price !== '') {
+            newPrice = parseFloat(req.body.price);
         }    
         if (typeof req.body.thumbnail === 'string' && req.body.thumbnail !== '') {   
             newThumbnail = req.body.thumbnail;
         }
-        newPrice = parseFloat(newPrice);
         const newProduct = {title:newTitle, price:newPrice, thumbnail:newThumbnail};
         const editProduct = await productContainer.edit(putId, newProduct);
         res.render('pages/index.pug', {successfulEdit: true, editedProduct: JSON.stringify(editProduct, null, 2)});

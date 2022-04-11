@@ -25,24 +25,14 @@
   },
   {
     "id": 5,
-    "title": "asd",
-    "price": 123,
-    "thumbnail": "asd"
-  },
-  {
-    "id": 6,
-    "title": "asd",
-    "price": 123,
-    "thumbnail": "asd"
+    "title": "ey",
+    "price": 100,
+    "thumbnail": "ey"
   },
   {
     "id": 7,
     "title": "Another Product (test)",
     "price": 100,
     "thumbnail": "https://isvshop.netlify.app/assets/logoISV.png"
-  },
-  {
-    "id": 8,
-    "price": null
   }
 ]
