@@ -5,7 +5,7 @@ html
         <main class="container">
             <section>
                 <h2>Add a Product</h2>
-                <form action="/" method="POST">
+                <form action="/" method="POST" onsubmit="return productEvent(this)">
                     <div class="form-group">
                         div Name: <input type="text" name="title" class="form-control">
                         div Price: <input type="text" name="price" class="form-control">
@@ -20,7 +20,7 @@ html
                 div(class="alert alert-danger", role="alert")= 'Product could not be added: ' + addError
             <section>
                 <h2>Edit Existing Product</h2>
-                <form action="/edit" method="POST">
+                <form action="/edit" method="POST" onsubmit="return productEvent(this)">
                     <div class="form-group">
                         div ID: <input type="text" name="id" class="form-control">
                         div Name: <input type="text" name="title" class="form-control">
@@ -35,10 +35,19 @@ html
             if unsuccessfulEdit
                 div(class="alert alert-danger", role="alert")= 'Product could not be edited: ' + editError
             section
+                h2='Products'
+                div(class='itemTable')
+                    table(class='table' id='productTable')
+                        tr
+                            th(scope="col")='ID'
+                            th(scope="col")='Name'
+                            th(scope="col")='Thumbnail'
+                            th(scope="col")='Price'   
+            section
                 <h2>Chat</h2>
                 <form onsubmit="return addMessage(this)">
-                    <input class="form-control" type="text" id="username" placeholder="Name">
-                    <input class="form-control" type="text" id="text" placeholder="Your message">
+                    <input class="form-control" type="text" id="userEmail" placeholder="Email">
+                    <input class="form-control" type="text" id="userMessage" placeholder="Your message">
                     <input class="btn btn-primary" type="submit" value="Send">
                 </form>
                 <div id='messages'></div>

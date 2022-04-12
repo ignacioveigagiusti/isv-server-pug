@@ -39,6 +39,15 @@ section{
     gap: 16px;
 }
 
+.itemTable img {
+    width:100px;
+}
+
+.itemTable td {
+    height: auto;
+    vertical-align: middle;
+}
+
 .itemCard {
     border-radius: 16px;
     background: lavender;

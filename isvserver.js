@@ -24,8 +24,14 @@ app.set('views', './views');
 app.use(express.static('public'));
 
 // public/index.html is sent when performing a get on the root directory
-app.get('/', (req, res) => {
-    res.render('pages/index.pug');
+app.get('/', async (req, res) => {
+    let allProducts = []
+    try {
+        allProducts = await productContainer.getAll();
+    } catch (err) {
+        res.render('pages/index.pug', {error: err});
+    }
+    res.render('pages/index.pug', {productList: allProducts});
 })
 
 app.post('/', async (req, res) => {
@@ -174,11 +180,16 @@ httpServer.on("error", err => console.log(`Error en el servidor: ${err}`));
 io.on('connection', async (socket) => {
     console.log('Client connected');
     const messages = JSON.parse(await fs.promises.readFile('./api/messages.json', 'utf8'));
-    console.log(typeof messages);
+    let products = await productContainer.getAll();
     socket.emit('messages', messages);
+    socket.emit('products', products);
     socket.on('newMessage', async data => {
         messages.push(data);
         await fs.promises.writeFile('./api/messages.json', JSON.stringify(messages,null,2));
         io.sockets.emit('messages', messages);
+    });
+    socket.on('productEvent', async () => {
+        products = await productContainer.getAll();
+        io.sockets.emit('products', products);
     });
 })
