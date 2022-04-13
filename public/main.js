@@ -1,5 +1,9 @@
 const socket = io.connect()
 
+console.log(window.location.origin);
+console.log(window.location.pathname);
+console.log(window.location);
+
 function checkChatMsg() {
     alert('Please complete all fields correctly')
     return false
@@ -17,8 +21,38 @@ function addMessage(e) {
     return false;
 };
 
-function productEvent(e) {
-    socket.emit('productEvent');
+function addProduct() {
+    
+    // fetch(window.location.origin + '/', { 
+    //     method: 'POST', 
+    //     headers: {'Content-Type': 'application/json'}, 
+    //     body: JSON.stringify(req.body)
+    // }).then((req, response) => {
+    //     console.log(req)
+    //     console.log(response.json())
+    // }).then((data) => {
+    //     console.log(data);
+    // }).catch((err) => {
+    //     console.log(err);
+    // }).finally(
+    //     socket.emit('productEvent')
+    // )
+    return false
+};
+
+function editProduct(e) {
+    // fetch(window.location.origin + '/edit', { 
+    //     method: 'POST', 
+    //     headers: {'Content-Type': 'application/json'}, 
+    //     body: JSON.stringify(data)
+    // }).then(function(response) {
+    //     return response.json();
+    // }).then(function(data) {
+    //     console.log(data);
+    // }).catch(function() {
+    //     console.log("Booo");
+    // });
+    // socket.emit('productEvent');
     return false
 };
 

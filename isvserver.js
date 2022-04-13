@@ -23,7 +23,7 @@ app.set('view engine', 'pug');
 app.set('views', './views');
 app.use(express.static('public'));
 
-// public/index.html is sent when performing a get on the root directory
+// index.html is sent when performing a get on the root directory
 app.get('/', async (req, res) => {
     let allProducts = []
     try {
@@ -140,9 +140,9 @@ productRouter.post('/', async (req, res) => {
             throw 'Missing data. Product needs Title, Price, Thumbnail, Category and Stock.'
         }
         let category = req.body.category;
-        let subcategory = req.body.subcategory;
+        let subcategory = req.body.subcategory || ' ';
         let title = req.body.title;
-        let description = req.body.description;
+        let description = req.body.description || ' ';
         let price = req.body.price;
         let stock = req.body.stock;
         let thumbnail = req.body.thumbnail;
@@ -162,9 +162,9 @@ productRouter.put('/:id', async (req, res) => {
         const param = req.params.id;
         const prevProduct = productContainer.getById(param);
         let newCategory = prevProduct.category;
-        let newSubcategory = prevProduct.subcategory;
+        let newSubcategory = prevProduct.subcategory || '';
         let newTitle = prevProduct.title;
-        let newDescription = prevProduct.description;
+        let newDescription = prevProduct.description || '';
         let newPrice = prevProduct.price;
         let newStock = prevProduct.stock;
         let newThumbnail = prevProduct.thumbnail;

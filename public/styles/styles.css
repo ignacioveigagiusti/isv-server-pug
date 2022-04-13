@@ -95,6 +95,7 @@ section{
 
 #chatWidget{
     border-radius: 10px;
+    border-bottom-right-radius: 0;
     background-color: floralwhite;
     padding: 10px;
     border-style: solid;
