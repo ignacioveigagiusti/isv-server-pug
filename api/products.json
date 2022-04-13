@@ -1,32 +1,52 @@
 [
   {
     "id": 1,
+    "category": "Products",
+    "subcategory": "",
     "title": "Lana de Vidrio (m)",
+    "description": "Aislante de lana de Vidrio hidrorepelente Isover revestido en una de sus caras con velo de vidrio reforzado. Aislamiento térmico y acústico, para instalaciones en paredes, sobre techos inclinados o cielorrasos suspendidos y entretechos en posición horizontal o inclinado sin carga.",
     "price": 450,
+    "stock":10,
     "thumbnail": "https://isvshop.netlify.app/assets/acustiverR.png"
   },
   {
     "id": 2,
+    "category": "Products",
+    "subcategory": "",
     "title": "Placa de Lana de Vidrio",
+    "description": "Paneles de lana de vidrio ISOVER G3. Aislamiento acústico y térmico, diseñado para sistemas en seco y sobre cielorrasos de cualquier tipo. Tratamiento fonoabsorbente de locales para disminuir el Tiempo de Reverberación de los mismos. Sirve como revestimiento de muros, en el interior de tabiques y cielorrasos.",
     "price": 450,
+    "stock":10,
     "thumbnail": "https://isvshop.netlify.app/assets/acustiverP.png"
   },
   {
     "id": 3,
+    "category": "Products",
+    "subcategory": "",
     "title": "Placa de Yeso (m²)",
+    "description": "Placas de yeso, solución estándar para renovar o construir paredes, cielorrasos y revestimientos interiores en ambientes secos, como dormitorios, oficinas, locales comerciales, etc.",
     "price": 500,
+    "stock":10,
     "thumbnail": "https://isvshop.netlify.app/assets/durlock.png"
   },
   {
     "id": 4,
+    "category": "Products",
+    "subcategory": "",
     "title": "New Product (test)",
+    "description": "Some description of the product.",
     "price": 100,
+    "stock":10,
     "thumbnail": "https://isvshop.netlify.app/assets/logoISV.png"
   },
   {
     "id": 7,
+    "category": "Products",
+    "subcategory": "",
     "title": "Another Product (test)",
+    "description": "Some description of the product.",
     "price": 100,
+    "stock":10,
     "thumbnail": "https://isvshop.netlify.app/assets/logoISV.png"
   }
 ]

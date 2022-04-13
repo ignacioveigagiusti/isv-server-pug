@@ -1,14 +1,14 @@
 [
   {
-    "author": "Ignacio",
+    "author": "user_1@xmail.com",
     "text": "Hello!"
   },
   {
-    "author": "Evil Ignacio",
+    "author": "evil_server@xmail.com",
     "text": "Goodbye!"
   },
   {
-    "author": "Ignacio",
+    "author": "user_1@xmail.com",
     "text": "Oh, ok, see you!"
   }
 ]
