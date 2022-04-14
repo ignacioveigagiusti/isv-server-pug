@@ -6,16 +6,16 @@ html
         <main class="container">
             <section>
                 <h2>Add a Product</h2>
-                <form onsubmit="return addProduct(this)">
+                <form onsubmit="addProduct(event)">
                     <div class="form-group">
-                        div Category: <input type="text" name="category" class="form-control">
-                        div Subcategory: <input type="text" name="subcategory" class="form-control">
-                        div Name: <input type="text" name="title" class="form-control">
-                        div Description: <input type="text" name="description" class="form-control">
-                        div Price: <input type="number" name="price" class="form-control">
-                        div Stock: <input type="number" name="stock" class="form-control">
-                        div Image URL: <input type="text" name="thumbnail" class="form-control">
-                        <button class="btn btn-primary">Send</button>
+                        div Category: <input type="text" name="category" id="addCategory" class="form-control">
+                        div Subcategory: <input type="text" name="subcategory" id="addSubcategory" class="form-control">
+                        div Name: <input type="text" name="title" id="addTitle" class="form-control">
+                        div Description: <input type="text" name="description" id="addDescription" class="form-control">
+                        div Price: <input type="number" name="price" id="addPrice" class="form-control">
+                        div Stock: <input type="number" name="stock" id="addStock" class="form-control">
+                        div Image URL: <input type="text" name="thumbnail" id="addThumbnail" class="form-control">
+                        <button class="btn btn-primary" onclick="(e) => {e.preventDefault()}">Send</button>
                     </div>
                 </form>
             </section>
@@ -25,17 +25,17 @@ html
                 div(class="alert alert-danger", role="alert")= 'Product could not be added: ' + addError
             <section>
                 <h2>Edit Existing Product</h2>
-                <form onsubmit="return editProduct(this)">
+                <form onsubmit="editProduct(event)">
                     <div class="form-group">
-                        div ID: <input type="text" name="id" class="form-control">
-                        div Category: <input type="text" name="category" class="form-control">
-                        div Subcategory: <input type="text" name="subcategory" class="form-control">
-                        div Name: <input type="text" name="title" class="form-control">
-                        div Description: <input type="text" name="description" class="form-control">
-                        div Price: <input type="number" name="price" class="form-control">
-                        div Stock: <input type="number" name="stock" class="form-control">
-                        div Image URL: <input type="text" name="thumbnail" class="form-control">
-                        <button class="btn btn-primary">Send</button>
+                        div ID: <input type="text" name="id" id="editId" class="form-control">
+                        div Category: <input type="text" name="category" id="editCategory" class="form-control">
+                        div Subcategory: <input type="text" name="subcategory" id="editSubcategory" class="form-control">
+                        div Name: <input type="text" name="title" id="editTitle" class="form-control">
+                        div Description: <input type="text" name="description" id="editDescription" class="form-control">
+                        div Price: <input type="number" name="price" id="editPrice" class="form-control">
+                        div Stock: <input type="number" name="stock" id="editStock" class="form-control">
+                        div Image URL: <input type="text" name="thumbnail" id="editThumbnail" class="form-control">
+                        <button class="btn btn-primary" onclick="(e) => {e.preventDefault()}">Send</button>
                     </div>
                 </form>
             </section>

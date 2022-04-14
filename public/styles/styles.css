@@ -82,7 +82,7 @@ section{
 }
 
 .chatContainer{
-    max-width: 250px;
+    max-width: 500px;
     max-height: inherit;
     position: fixed;
     left: auto;
@@ -100,6 +100,10 @@ section{
     padding: 10px;
     border-style: solid;
     border-color: antiquewhite;
+}
+
+#messages span {
+    color: brown;
 }
 
 .chatToggleBtn{

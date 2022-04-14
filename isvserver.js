@@ -31,7 +31,7 @@ app.get('/', async (req, res) => {
     } catch (err) {
         res.render('pages/index.pug', {error: err});
     }
-    res.render('pages/index.pug', {productList: allProducts});
+    res.render('pages/index.pug');
 })
 
 app.post('/', async (req, res) => {
@@ -50,9 +50,9 @@ app.post('/', async (req, res) => {
         stock = parseFloat(stock);
         const newProduct = {category:category, subcategory:subcategory, title:title, description:description, price:price, stock:stock, thumbnail:thumbnail};
         const savedProduct = await productContainer.save(newProduct);
-        res.render('pages/index.pug', {addedProduct: JSON.stringify(savedProduct), successfulAdd: true});
+        res.send(JSON.stringify(savedProduct));
     } catch (err) {
-        res.render('pages/index.pug', {unsuccessfulAdd: true, addError: err});
+        res.send(err);
     }
 })
 
@@ -96,9 +96,9 @@ app.post('/edit', async (req, res) => {
         }
         const newProduct = {category:newCategory, subcategory:newSubcategory, title:newTitle, description:newDescription, price:newPrice, stock:newStock, thumbnail:newThumbnail};
         const editProduct = await productContainer.edit(putId, newProduct);
-        res.render('pages/index.pug', {successfulEdit: true, editedProduct: JSON.stringify(editProduct, null, 2)});
+        res.send(editProduct);
     } catch (err) {
-        res.render('pages/index.pug', {unsuccessfulEdit: true, editError: err});
+        res.send(err);
     }
 });
 

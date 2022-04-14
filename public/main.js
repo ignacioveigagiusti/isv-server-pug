@@ -1,65 +1,101 @@
 const socket = io.connect()
 
-console.log(window.location.origin);
-console.log(window.location.pathname);
-console.log(window.location);
-
 function checkChatMsg() {
-    alert('Please complete all fields correctly')
-    return false
+    alert('Please complete all fields correctly');
+    return false;
 }
 
 function addMessage(e) {
-    const userEmail = document.getElementById('userEmail').value
-    const userMessage = document.getElementById('userMessage').value
-    if (!userEmail || !userMessage || !(userEmail.includes('@'))) return checkChatMsg()
+    const userEmail = document.getElementById('userEmail').value;
+    const userMessage = document.getElementById('userMessage').value;
+    if (!userEmail || !userMessage || !(userEmail.includes('@'))) return checkChatMsg();
     const messageToAdd = {
         author: userEmail,
+        timestamp: String(new Date()),
         text: userMessage
     };
     socket.emit('newMessage', messageToAdd);
     return false;
 };
 
-function addProduct() {
-    
-    // fetch(window.location.origin + '/', { 
-    //     method: 'POST', 
-    //     headers: {'Content-Type': 'application/json'}, 
-    //     body: JSON.stringify(req.body)
-    // }).then((req, response) => {
-    //     console.log(req)
-    //     console.log(response.json())
-    // }).then((data) => {
-    //     console.log(data);
-    // }).catch((err) => {
-    //     console.log(err);
-    // }).finally(
-    //     socket.emit('productEvent')
-    // )
-    return false
+function checkAddProduct() {
+    alert('Please complete all fields correctly');
+    return false;
+}
+
+function addProduct(e) {
+    e.preventDefault();
+    const category = document.getElementById('addCategory').value;
+    const subcategory = document.getElementById('addSubcategory').value || '';
+    const title = document.getElementById('addTitle').value;
+    const description = document.getElementById('addDescription').value || '';
+    const price = document.getElementById('addPrice').value;
+    const stock = document.getElementById('addStock').value;
+    const thumbnail = document.getElementById('addThumbnail').value;
+    if (!category || !title || !price || !stock || !thumbnail ) return checkAddProduct();
+    const productToAdd = {
+        category: category,
+        subcategory: subcategory,
+        title: title,
+        description: description,
+        price: price,
+        stock: stock,
+        thumbnail:thumbnail 
+    }
+    fetch(window.location.origin, { 
+        method: 'POST', 
+        body: JSON.stringify(productToAdd),
+        headers: {'Content-Type': 'application/json'},
+    }).then((res) => {
+        socket.emit('productEvent');
+        return false;
+    }).then((data) => {
+        
+    }).catch((err) => {
+        alert(err);
+    })
 };
 
 function editProduct(e) {
-    // fetch(window.location.origin + '/edit', { 
-    //     method: 'POST', 
-    //     headers: {'Content-Type': 'application/json'}, 
-    //     body: JSON.stringify(data)
-    // }).then(function(response) {
-    //     return response.json();
-    // }).then(function(data) {
-    //     console.log(data);
-    // }).catch(function() {
-    //     console.log("Booo");
-    // });
-    // socket.emit('productEvent');
-    return false
+    e.preventDefault();
+    const id = parseInt(document.getElementById('editId').value);
+    const category = document.getElementById('editCategory').value;
+    const subcategory = document.getElementById('editSubcategory').value || '';
+    const title = document.getElementById('editTitle').value;
+    const description = document.getElementById('editDescription').value || '';
+    const price = parseFloat(document.getElementById('editPrice').value);
+    const stock = parseInt(document.getElementById('editStock').value);
+    const thumbnail = document.getElementById('editThumbnail').value;
+    if (!id) return checkAddProduct();
+    const productToEdit = {
+        id: id,
+        category: category,
+        subcategory: subcategory,
+        title: title,
+        description: description,
+        price: price,
+        stock: stock,
+        thumbnail:thumbnail 
+    }
+    fetch(window.location.origin + '/edit', { 
+        method: 'POST', 
+        body: JSON.stringify(productToEdit),
+        headers: {'Content-Type': 'application/json'},
+    }).then((res) => {
+        socket.emit('productEvent');
+        return false;
+    }).then((data) => {
+        
+    }).catch((err) => {
+        alert(err);
+    })
 };
 
 function renderMessages (data) {
     const html = data.map((elem, index) => {
         return(`<div>
         <strong>${elem.author}</strong>:
+        <span>${elem.timestamp}</span>
         <em>${elem.text}</em>
         </div>`)
     }).join(' ');
