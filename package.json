@@ -5,5 +5,24 @@
     "method-override": "^3.0.0",
     "pug": "^3.0.2",
     "socket.io": "^4.4.1"
-  }
+  },
+  "name": "isv-server",
+  "version": "1.0.0",
+  "main": "isvserver.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node isvserver.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ignacioveigagiusti/isv-server.git"
+  },
+  "author": "Ignacio Veiga",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ignacioveigagiusti/isv-server/issues"
+  },
+  "homepage": "https://github.com/ignacioveigagiusti/isv-server#readme",
+  "description": ""
 }
