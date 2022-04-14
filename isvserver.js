@@ -52,7 +52,7 @@ app.post('/', async (req, res) => {
         const savedProduct = await productContainer.save(newProduct);
         res.send(JSON.stringify(savedProduct));
     } catch (err) {
-        res.send(err);
+        res.status(400).send(err);
     }
 })
 
@@ -95,10 +95,12 @@ app.post('/edit', async (req, res) => {
             newThumbnail = req.body.thumbnail;
         }
         const newProduct = {category:newCategory, subcategory:newSubcategory, title:newTitle, description:newDescription, price:newPrice, stock:newStock, thumbnail:newThumbnail};
-        const editProduct = await productContainer.edit(putId, newProduct);
+        const editProduct = await productContainer.edit(putId, newProduct).catch((err) => {
+            throw err
+        });
         res.send(editProduct);
     } catch (err) {
-        res.send(err);
+        res.status(400).send(err.message || err);
     }
 });
 

@@ -1,6 +1,6 @@
 html
     include ../partials/head.pug 
-    <script src="/main.js"></script>
+    <script src="/main.js" defer></script>
     body
         include ../partials/header.pug
         <main class="container">
@@ -19,10 +19,10 @@ html
                     </div>
                 </form>
             </section>
-            if successfulAdd
-                div(class="alert alert-success", role="alert")= 'Product added successfully!'
-            if unsuccessfulAdd
-                div(class="alert alert-danger", role="alert")= 'Product could not be added: ' + addError
+                div(id="successfulAddWrapper")
+                    div(class="alert alert-success", id="successfulAdd" ,role="alert")= 'Product added successfully!'
+                div(id="unsuccessfulAddWrapper")
+                    div(class="alert alert-danger", id="unsuccessfulAdd" ,role="alert")= 'Product could not be added'
             <section>
                 <h2>Edit Existing Product</h2>
                 <form onsubmit="editProduct(event)">
@@ -39,10 +39,10 @@ html
                     </div>
                 </form>
             </section>
-            if successfulEdit
-                div(class="alert alert-success", role="alert")= 'Product edited successfully: ' + editedProduct
-            if unsuccessfulEdit
-                div(class="alert alert-danger", role="alert")= 'Product could not be edited: ' + editError
+                div(id="successfulEditWrapper")
+                    div(class="alert alert-success", id="successfulEdit" ,role="alert")= 'Product edited successfully!'
+                div(id="unsuccessfulEditWrapper")
+                    div(class="alert alert-danger", id="unsuccessfulEdit" ,role="alert")= 'Product could not be edited.'
             section
                 h2='Products'
                 div(class='itemTable')

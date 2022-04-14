@@ -11,19 +11,28 @@ function addMessage(e) {
     if (!userEmail || !userMessage || !(userEmail.includes('@'))) return checkChatMsg();
     const messageToAdd = {
         author: userEmail,
-        timestamp: String(new Date()),
+        timestamp: String(new Date()).slice(0,33),
         text: userMessage
     };
     socket.emit('newMessage', messageToAdd);
     return false;
 };
 
-function checkAddProduct() {
-    alert('Please complete all fields correctly');
+function checkAddProduct(err) {
+    document.getElementById('successfulAddWrapper').style.maxHeight = '0';
+    document.getElementById('unsuccessfulAdd').innerHTML = err;
+    document.getElementById('unsuccessfulAddWrapper').style.maxHeight = document.getElementById('unsuccessfulAdd').offsetHeight;
     return false;
 }
 
-function addProduct(e) {
+function checkEditProduct(err) {
+    document.getElementById('successfulEditWrapper').style.maxHeight = '0';
+    document.getElementById('unsuccessfulEdit').innerHTML = err;
+    document.getElementById('unsuccessfulEditWrapper').style.maxHeight = document.getElementById('unsuccessfulEdit').offsetHeight;
+    return false;
+}
+
+async function addProduct(e) {
     e.preventDefault();
     const category = document.getElementById('addCategory').value;
     const subcategory = document.getElementById('addSubcategory').value || '';
@@ -32,7 +41,6 @@ function addProduct(e) {
     const price = document.getElementById('addPrice').value;
     const stock = document.getElementById('addStock').value;
     const thumbnail = document.getElementById('addThumbnail').value;
-    if (!category || !title || !price || !stock || !thumbnail ) return checkAddProduct();
     const productToAdd = {
         category: category,
         subcategory: subcategory,
@@ -41,22 +49,25 @@ function addProduct(e) {
         price: price,
         stock: stock,
         thumbnail:thumbnail 
-    }
-    fetch(window.location.origin, { 
-        method: 'POST', 
-        body: JSON.stringify(productToAdd),
-        headers: {'Content-Type': 'application/json'},
-    }).then((res) => {
+    };
+    try {
+        const res = await fetch(window.location.origin, { 
+            method: 'POST', 
+            body: JSON.stringify(productToAdd),
+            headers: {'Content-Type': 'application/json'},
+        });
+        if (!res.ok) throw res.text();
         socket.emit('productEvent');
+        document.getElementById('unsuccessfulAddWrapper').style.maxHeight = '0';
+        document.getElementById('successfulAdd').innerHTML = 'Product added Succesfully!' + JSON.stringify(await res.json(), null, '<br>');
+        document.getElementById('successfulAddWrapper').style.maxHeight = document.getElementById('successfulAdd').offsetHeight;
         return false;
-    }).then((data) => {
-        
-    }).catch((err) => {
-        alert(err);
-    })
+    } catch (err) {
+        checkAddProduct(await err);
+    }
 };
 
-function editProduct(e) {
+async function editProduct(e) {
     e.preventDefault();
     const id = parseInt(document.getElementById('editId').value);
     const category = document.getElementById('editCategory').value;
@@ -66,7 +77,7 @@ function editProduct(e) {
     const price = parseFloat(document.getElementById('editPrice').value);
     const stock = parseInt(document.getElementById('editStock').value);
     const thumbnail = document.getElementById('editThumbnail').value;
-    if (!id) return checkAddProduct();
+    // if (!id) return checkEditProduct('Missing data.');
     const productToEdit = {
         id: id,
         category: category,
@@ -77,18 +88,21 @@ function editProduct(e) {
         stock: stock,
         thumbnail:thumbnail 
     }
-    fetch(window.location.origin + '/edit', { 
-        method: 'POST', 
-        body: JSON.stringify(productToEdit),
-        headers: {'Content-Type': 'application/json'},
-    }).then((res) => {
+    try {
+        const res = await fetch(window.location.origin + '/edit', { 
+            method: 'POST', 
+            body: JSON.stringify(productToEdit),
+            headers: {'Content-Type': 'application/json'},
+        });
+        if (!res.ok) throw res.text()
         socket.emit('productEvent');
+        document.getElementById('unsuccessfulEditWrapper').style.maxHeight = '0';
+        document.getElementById('successfulEdit').innerHTML = 'Product Edited Succesfully! <br>' + JSON.stringify(await res.json(), null, '<br>');
+        document.getElementById('successfulEditWrapper').style.maxHeight = document.getElementById('successfulEdit').offsetHeight;
         return false;
-    }).then((data) => {
-        
-    }).catch((err) => {
-        alert(err);
-    })
+    } catch (err) {
+        checkEditProduct(await err);
+    }
 };
 
 function renderMessages (data) {

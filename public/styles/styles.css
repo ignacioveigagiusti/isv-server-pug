@@ -81,6 +81,30 @@ section{
     border-bottom-right-radius: 16px;
 }
 
+#successfulAddWrapper{
+    transition:max-height 0.5s ease-out;
+    max-height:0;
+    overflow:hidden;
+}
+
+#unsuccessfulAddWrapper{
+    transition:max-height 0.5s ease-out;
+    max-height:0;
+    overflow:hidden;
+}
+
+#successfulEditWrapper{
+    transition:max-height 0.5s ease-out;
+    max-height:0;
+    overflow:hidden;
+}
+
+#unsuccessfulEditWrapper{
+    transition:max-height 0.5s ease-out;
+    max-height:0;
+    overflow:hidden;
+}
+
 .chatContainer{
     max-width: 500px;
     max-height: inherit;
