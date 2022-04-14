@@ -85,10 +85,10 @@ app.post('/edit', async (req, res) => {
         if (typeof req.body.description === 'string' && req.body.description !== '') {
             newDescription = req.body.description;
         }
-        if (parseFloat(req.body.price) != null && req.body.price !== '') {
+        if (!isNaN(req.body.price) && req.body.price && req.body.price !== '') {
             newPrice = parseFloat(req.body.price);
         }
-        if (parseFloat(req.body.stock) != null && req.body.stock !== '') {
+        if (!isNaN(req.body.stock) && req.body.stock && req.body.stock !== '') {
             newStock = parseFloat(req.body.stock);
         }      
         if (typeof req.body.thumbnail === 'string' && req.body.thumbnail !== '') {   

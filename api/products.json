@@ -32,7 +32,7 @@
   {
     "id": 4,
     "category": "Products",
-    "subcategory": "",
+    "subcategory": " ",
     "title": "New Product (test)",
     "description": "Some description of the product.",
     "price": 100,
@@ -42,7 +42,7 @@
   {
     "id": 7,
     "category": "Products",
-    "subcategory": "",
+    "subcategory": " ",
     "title": "Another Product (test)",
     "description": "Some description of the product.",
     "price": 100,
