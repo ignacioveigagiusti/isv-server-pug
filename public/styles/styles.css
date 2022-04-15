@@ -14,9 +14,7 @@
     text-align: center;
     font-family: 'Open Sans', sans-serif;
     font-weight: bold;
-    overflow: hidden;
-    font-size: 3rem;
-    line-height: 3rem; 
+    overflow: hidden; 
 }
 
 .container h2 {
@@ -24,8 +22,14 @@
     color: midnightblue;
     font: bold 2rem "Open Sans", sans-serif;
     margin-bottom: 10px;
-    font-size: 2rem;
-    line-height: 3rem;
+}
+
+form {
+    margin-bottom: 10px;
+}
+
+.btn {
+    margin-top: 10px
 }
 
 section{
@@ -37,6 +41,10 @@ section{
     flex-wrap: wrap;
     justify-content: center;
     gap: 16px;
+}
+
+.itemTable{
+    overflow: scroll;
 }
 
 .itemTable img {
@@ -105,6 +113,13 @@ section{
     overflow:hidden;
 }
 
+#msgAlertWrapper{
+    transition:max-height 0.5s ease-out;
+    max-height:0;
+    overflow:hidden;
+    color: crimson;
+}
+
 .chatContainer{
     max-width: 500px;
     max-height: inherit;
@@ -133,4 +148,22 @@ section{
 .chatToggleBtn{
     width: fit-content;
     box-shadow: 2px 2px 5px grey;
+}
+
+@media screen and (max-width: 320px) {
+    .container .row{
+        flex-direction: column;
+    }
+    html{
+        font-size: 8px
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .container .row{
+        flex-direction: column;
+    }
+    html{
+        font-size: 16px
+    }
 }

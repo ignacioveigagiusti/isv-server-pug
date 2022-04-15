@@ -1,21 +1,24 @@
 const socket = io.connect()
 
 function checkChatMsg() {
-    alert('Please complete all fields correctly');
+    document.getElementById('msgAlert').innerHTML = 'Please complete all fields correctly';
+    document.getElementById('msgAlertWrapper').style.maxHeight = document.getElementById('msgAlert').offsetHeight;
     return false;
 }
 
-function addMessage(e) {
+function addMessage(event) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
     const userEmail = document.getElementById('userEmail').value;
     const userMessage = document.getElementById('userMessage').value;
-    if (!userEmail || !userMessage || !(userEmail.includes('@'))) return checkChatMsg();
+    if (!userEmail || !userMessage || !(userEmail.includes('@'))) return checkChatMsg(event);
+    document.getElementById('msgAlertWrapper').style.maxHeight = 0;
     const messageToAdd = {
         author: userEmail,
         timestamp: String(new Date()).slice(0,33),
         text: userMessage
     };
     socket.emit('newMessage', messageToAdd);
-    return false;
 };
 
 function checkAddProduct(err) {
