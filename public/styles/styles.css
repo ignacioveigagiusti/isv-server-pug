@@ -44,7 +44,30 @@ section{
 }
 
 .itemTable{
-    overflow: scroll;
+    overflow-x: scroll;
+}
+
+/*Scrollbar Styles*/    
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background:white;    
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: lightgray;
+    border-radius: 3px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .itemTable img {
@@ -54,7 +77,8 @@ section{
 .itemTable td {
     height: auto;
     vertical-align: middle;
-}
+    
+}  
 
 .itemCard {
     border-radius: 16px;
