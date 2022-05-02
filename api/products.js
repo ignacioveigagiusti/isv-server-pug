@@ -1,17 +1,20 @@
 const fs = require('fs');
+const { options } = require('../options/mysqlDB')
+const knex = require('knex')(options);
 
 class Products {
-    constructor(fileToWork){
-        this.fileToWork = fileToWork
-    }
     
     async save(product) {
         try{
-            let getContent = await fs.promises.readFile(`${this.fileToWork}`, 'utf8');
+            let getContent = [];
+            await knex('products').select("*").then((rows) => {
+                let rowsarr = rows;
+                rowsarr.map(row => getContent.push(JSON.parse(JSON.stringify(row))));
+            });
             if (getContent == '') {
                 getContent = '[]';
             }
-            const prevContent = JSON.parse(getContent); 
+            const prevContent = getContent; 
             // Extract IDs into an array
             let indexArray = [];
             for (const i in prevContent) {
@@ -23,17 +26,15 @@ class Products {
             if (indexArray.length > 0) {
                 indexArray = indexArray.sort((a,b) => a - b )
                 for (let i = 0; i < indexArray.length; i++) {
-                    if ((indexArray[i]-i) != 1){
+                    if ( (indexArray[i] - i) != 1){
                         newID = i+1;
                         break
                     }
                 }
             }
-            const newProduct = {id: newID, ...product};
-            let newContent = prevContent
-            newContent.push(newProduct);
-            await newContent.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
-            await fs.promises.writeFile(`${this.fileToWork}`, JSON.stringify(newContent,null,2));
+            const newProduct = {id: newID, timestamp: String(new Date()).slice(0,33), ...product};
+            //KNEX
+            await knex('products').insert(newProduct);
             console.log('Escritura exitosa!');
             return newProduct;
         }
@@ -44,11 +45,15 @@ class Products {
 
     async edit(productId, product) {
         try{
-            let getContent = await fs.promises.readFile(`${this.fileToWork}`, 'utf8');
+            let getContent = [];
+            await knex('products').select("*").then((rows) => {
+                let rowsarr = rows;
+                rowsarr.map(row => getContent.push(JSON.parse(JSON.stringify(row))));
+            });
             if (getContent == '') {
                 getContent = '[]';
             }
-            let prevContent = JSON.parse(getContent);
+            let prevContent = getContent;
             // Variable to check if the ID exists in the list
             let IDwasFound = 0;
             for (const i in prevContent) {
@@ -59,7 +64,8 @@ class Products {
             }
             // Throw error if ID was not found
             if (IDwasFound == 0) throw 'ID was not found';
-            await fs.promises.writeFile(`${this.fileToWork}`, JSON.stringify(prevContent,null,2));
+            //KNEX
+            await knex('products').where({id:productId}).update({...product});
             console.log('Escritura exitosa!');
             return { id: parseInt(productId), ...product}
         }
@@ -70,8 +76,12 @@ class Products {
 
     async getById(num) {
         try{
-            const getContent = await fs.promises.readFile(`${this.fileToWork}`, 'utf8');
-            const content = JSON.parse(getContent); 
+            let getContent = [];
+            await knex('products').select("*").then((rows) => {
+                let rowsarr = rows;
+                rowsarr.map(row => getContent.push(JSON.parse(JSON.stringify(row))));
+            });
+            const content = getContent; 
             // Variable to check if the ID exists in the list
             let IDwasFound = 0;
             for (const i in content) {
@@ -90,9 +100,13 @@ class Products {
 
     async getAll() {
         try{
-            const getContent = await fs.promises.readFile(`${this.fileToWork}`,);
-            const content = JSON.parse(getContent); 
-            return content
+            let getContent = [];
+            await knex('products').select("*").then((rows) => {
+                let rowsarr = rows;
+                rowsarr.map(row => getContent.push(JSON.parse(JSON.stringify(row))));
+            });
+            // const content = JSON.parse(getContent); 
+            return getContent
         }
         catch(err){
             throw new Error(`${err}`)
@@ -101,8 +115,12 @@ class Products {
 
     async deleteById(num) {
         try{
-            const getContent = await fs.promises.readFile(`${this.fileToWork}`, 'utf-8');
-            const prevContent = JSON.parse(getContent); 
+            let getContent = [];
+            await knex('products').select("*").then((rows) => {
+                let rowsarr = rows;
+                rowsarr.map(row => getContent.push(JSON.parse(JSON.stringify(row))));
+            });
+            const prevContent = getContent; 
             const newContent = [];
             // Variable to check if the ID exists in the list
             let IDwasFound = 0;
@@ -118,8 +136,8 @@ class Products {
             }
             // Throw error if ID was not found
             if (IDwasFound == 0) throw 'ID does not exist!';
-            await fs.promises.writeFile(`${this.fileToWork}`, JSON.stringify(newContent,null,2))
-            console.log('Escritura exitosa!')
+            await knex('products').where('id', '=', num).del();
+            console.log('Escritura exitosa!');
         }
         catch(err){
             throw new Error(`${err}`)
@@ -128,7 +146,7 @@ class Products {
 
     async deleteAll() {
         try {
-            await fs.promises.writeFile(`${this.fileToWork}`, '[]')
+            await knex('products').del();
             console.log('Escritura exitosa!')
         } catch (err) {
             throw new Error(`${err}`) 
@@ -136,4 +154,4 @@ class Products {
     }
 }
 
-module.exports = Products
+module.exports = Products;

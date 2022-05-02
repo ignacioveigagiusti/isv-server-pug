@@ -11,7 +11,7 @@ const io = new IOServer(httpServer);
 const productRouter = new Router();
 
 const Products = require('./api/products.js');
-const productContainer = new Products('./api/products.json');
+const productContainer = new Products;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -36,19 +36,19 @@ app.get('/', async (req, res) => {
 
 app.post('/', async (req, res) => {
     try {
-        if( req.body.title == undefined || req.body.price === null || req.body.thumbnail == undefined || req.body.category == undefined || req.body.stock == null || req.body.title == '' || req.body.price === '' || req.body.thumbnail == '' || req.body.category == '' || req.body.stock == '' ) {
-            throw 'Missing data. Product needs Title, Price, Thumbnail, Category and Stock.'
+        if( req.body.name == undefined || req.body.price === null || req.body.thumbnail == undefined || req.body.category == undefined || req.body.stock == null || req.body.name == '' || req.body.price === '' || req.body.thumbnail == '' || req.body.category == '' || req.body.stock == '' ) {
+            throw 'Missing data. Product needs name, Price, Thumbnail, Category and Stock.'
         }
         let category = req.body.category;
         let subcategory = req.body.subcategory;
-        let title = req.body.title;
+        let name = req.body.name;
         let description = req.body.description;
         let price = req.body.price;
         let stock = req.body.stock;
         let thumbnail = req.body.thumbnail;
         price = parseFloat(price);
         stock = parseFloat(stock);
-        const newProduct = {category:category, subcategory:subcategory, title:title, description:description, price:price, stock:stock, thumbnail:thumbnail};
+        const newProduct = {category:category, subcategory:subcategory, name:name, description:description, price:price, stock:stock, thumbnail:thumbnail};
         const savedProduct = await productContainer.save(newProduct);
         res.send(JSON.stringify(savedProduct));
     } catch (err) {
@@ -68,10 +68,10 @@ app.post('/edit', async (req, res) => {
         const prevProduct = await productContainer.getById(putId);
         let newCategory = prevProduct.category;
         let newSubcategory = prevProduct.subcategory;
-        let newTitle = prevProduct.title;
+        let newName = prevProduct.name;
         let newDescription = prevProduct.description;
-        let newPrice = prevProduct.price;
-        let newStock = prevProduct.stock;
+        let newPrice = parseFloat(prevProduct.price);
+        let newStock = parseInt(prevProduct.stock);
         let newThumbnail = prevProduct.thumbnail;
         if (typeof req.body.category === 'string' && req.body.category !== '') {
             newCategory = req.body.category;
@@ -79,8 +79,8 @@ app.post('/edit', async (req, res) => {
         if (typeof req.body.subcategory === 'string' && req.body.subcategory !== '') {
             newSubcategory = req.body.subcategory;
         }
-        if (typeof req.body.title === 'string' && req.body.title !== '') {
-            newTitle = req.body.title;
+        if (typeof req.body.name === 'string' && req.body.name !== '') {
+            newName = req.body.name;
         }
         if (typeof req.body.description === 'string' && req.body.description !== '') {
             newDescription = req.body.description;
@@ -89,12 +89,12 @@ app.post('/edit', async (req, res) => {
             newPrice = parseFloat(req.body.price);
         }
         if (!isNaN(req.body.stock) && req.body.stock && req.body.stock !== '') {
-            newStock = parseFloat(req.body.stock);
+            newStock = parseInt(req.body.stock);
         }      
         if (typeof req.body.thumbnail === 'string' && req.body.thumbnail !== '') {   
             newThumbnail = req.body.thumbnail;
         }
-        const newProduct = {category:newCategory, subcategory:newSubcategory, title:newTitle, description:newDescription, price:newPrice, stock:newStock, thumbnail:newThumbnail};
+        const newProduct = {category:newCategory, subcategory:newSubcategory, name:newName, description:newDescription, price:newPrice, stock:newStock, thumbnail:newThumbnail};
         const editProduct = await productContainer.edit(putId, newProduct).catch((err) => {
             throw err
         });
@@ -138,19 +138,19 @@ productRouter.get('/:id', async (req, res) => {
 // add one product with a post method to /api/products
 productRouter.post('/', async (req, res) => {
     try {
-        if( req.body.title == undefined || req.body.price === null || req.body.thumbnail == undefined || req.body.category == undefined || req.body.stock == null || req.body.title == '' || req.body.price === '' || req.body.thumbnail == '' || req.body.category == '' || req.body.stock == '' ) {
-            throw 'Missing data. Product needs Title, Price, Thumbnail, Category and Stock.'
+        if( req.body.name == undefined || req.body.price === null || req.body.thumbnail == undefined || req.body.category == undefined || req.body.stock == null || req.body.name == '' || req.body.price === '' || req.body.thumbnail == '' || req.body.category == '' || req.body.stock == '' ) {
+            throw 'Missing data. Product needs name, Price, Thumbnail, Category and Stock.'
         }
         let category = req.body.category;
         let subcategory = req.body.subcategory || ' ';
-        let title = req.body.title;
+        let name = req.body.name;
         let description = req.body.description || ' ';
         let price = req.body.price;
         let stock = req.body.stock;
         let thumbnail = req.body.thumbnail;
         price = parseFloat(price);
         stock = parseFloat(stock);
-        const newProduct = {category:category, subcategory:subcategory, title:title, description:description, price:price, stock:stock, thumbnail:thumbnail};
+        const newProduct = {category:category, subcategory:subcategory, name:name, description:description, price:price, stock:stock, thumbnail:thumbnail};
         const savedProduct = await productContainer.save(newProduct);
         res.send(`Producto añadido: ${JSON.stringify(savedProduct)}`);
     } catch (err) {
@@ -162,36 +162,45 @@ productRouter.post('/', async (req, res) => {
 productRouter.put('/:id', async (req, res) => {
     try {
         const param = req.params.id;
-        const prevProduct = productContainer.getById(param);
+        const prevProduct = await productContainer.getById(param);
+        let newTimestamp = String(new Date()).slice(0,33);
         let newCategory = prevProduct.category;
+        let newCat = prevProduct.cat;
         let newSubcategory = prevProduct.subcategory || '';
-        let newTitle = prevProduct.title;
+        let newName = prevProduct.name;
         let newDescription = prevProduct.description || '';
         let newPrice = prevProduct.price;
         let newStock = prevProduct.stock;
+
         let newThumbnail = prevProduct.thumbnail;
+        if (typeof req.body.timestamp === 'string' && req.body.timestamp !== '') {
+            newTimestamp = req.body.timestamp;
+        }
         if (typeof req.body.category === 'string' && req.body.category !== '') {
             newCategory = req.body.category;
         }
         if (typeof req.body.subcategory === 'string' && req.body.subcategory !== '') {
             newSubcategory = req.body.subcategory;
         }
-        if (typeof req.body.title === 'string' && req.body.title !== '') {
-            newTitle = req.body.title;
+        if (typeof req.body.cat === 'string' && req.body.cat !== '') {
+            newCat = req.body.cat;
+        }
+        if (typeof req.body.name === 'string' && req.body.name !== '') {
+            newName = req.body.name;
         }
         if (typeof req.body.description === 'string' && req.body.description !== '') {
             newDescription = req.body.description;
         }
-        if (parseFloat(req.body.price) != null && req.body.price !== '') {
+        if (!isNaN(req.body.price) && req.body.price && req.body.price !== '') {
             newPrice = parseFloat(req.body.price);
         }
-        if (parseFloat(req.body.stock) != null && req.body.stock !== '') {
-            newStock = parseFloat(req.body.stock);
-        }      
+        if (!isNaN(req.body.stock) && req.body.stock && req.body.stock !== '') {
+            newStock = parseInt(req.body.stock);
+        }    
         if (typeof req.body.thumbnail === 'string' && req.body.thumbnail !== '') {   
             newThumbnail = req.body.thumbnail;
         }
-        const newProduct = {category:newCategory, subcategory:newSubcategory, title:newTitle, description:newDescription, price:newPrice, stock:newStock, thumbnail:newThumbnail};
+        const newProduct = {timestamp:newTimestamp, category:newCategory, subcategory:newSubcategory, name:newName, description:newDescription, price:newPrice, stock:newStock, thumbnail:newThumbnail, cat:newCat};
         await productContainer.edit(param, newProduct);
         res.json({id:param, ...newProduct});
     } catch (err) {
