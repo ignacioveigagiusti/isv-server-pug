@@ -45,9 +45,11 @@ async function addProduct(e) {
     const stock = document.getElementById('addStock').value;
     const thumbnail = document.getElementById('addThumbnail').value;
     const productToAdd = {
+        timestamp: String(new Date()).slice(0,33),
         category: category,
+        cat: category.toLowerCase(),
         subcategory: subcategory,
-        title: title,
+        name: title,
         description: description,
         price: price,
         stock: stock,
@@ -83,7 +85,9 @@ async function editProduct(e) {
     // if (!id) return checkEditProduct('Missing data.');
     const productToEdit = {
         id: id,
+        timestamp: String(new Date()).slice(0,33),
         category: category,
+        cat: category.toLowerCase(),
         subcategory: subcategory,
         title: title,
         description: description,
@@ -126,8 +130,8 @@ function renderProducts (data) {
         <td>${elem.id}</td>
         <td>${elem.category}</td>
         <td>${elem.subcategory}</td>
-        <td>${elem.title}</td>
-        <td><img src=${elem.thumbnail} alt=${elem.title}></td>
+        <td>${elem.name}</td>
+        <td><img src=${elem.thumbnail} alt=${elem.name}></td>
         <td>${elem.price}</td>
         <td>${elem.stock}</td>
         </tr>`)

@@ -1,13 +1,15 @@
-const fs = require('fs');
-const { options } = require('../options/mysqlDB')
-const knex = require('knex')(options);
-
 class Products {
     
+    constructor(options, tableName){
+        this.knex = require('knex')(options);
+        this.tableName = tableName;
+    }
+
+
     async save(product) {
         try{
             let getContent = [];
-            await knex('products').select("*").then((rows) => {
+            await this.knex(this.tableName).select("*").then((rows) => {
                 let rowsarr = rows;
                 rowsarr.map(row => getContent.push(JSON.parse(JSON.stringify(row))));
             });
@@ -34,8 +36,9 @@ class Products {
             }
             const newProduct = {id: newID, timestamp: String(new Date()).slice(0,33), ...product};
             //KNEX
-            await knex('products').insert(newProduct);
+            await this.knex(this.tableName).insert(newProduct);
             console.log('Escritura exitosa!');
+            
             return newProduct;
         }
         catch(err){
@@ -46,7 +49,7 @@ class Products {
     async edit(productId, product) {
         try{
             let getContent = [];
-            await knex('products').select("*").then((rows) => {
+            await this.knex(this.tableName).select("*").then((rows) => {
                 let rowsarr = rows;
                 rowsarr.map(row => getContent.push(JSON.parse(JSON.stringify(row))));
             });
@@ -65,8 +68,9 @@ class Products {
             // Throw error if ID was not found
             if (IDwasFound == 0) throw 'ID was not found';
             //KNEX
-            await knex('products').where({id:productId}).update({...product});
+            await this.knex(this.tableName).where({id:productId}).update({...product});
             console.log('Escritura exitosa!');
+            
             return { id: parseInt(productId), ...product}
         }
         catch(err){
@@ -77,7 +81,7 @@ class Products {
     async getById(num) {
         try{
             let getContent = [];
-            await knex('products').select("*").then((rows) => {
+            await this.knex(this.tableName).select("*").then((rows) => {
                 let rowsarr = rows;
                 rowsarr.map(row => getContent.push(JSON.parse(JSON.stringify(row))));
             });
@@ -87,6 +91,7 @@ class Products {
             for (const i in content) {
                 if (content[i].id == num) {
                     IDwasFound = 1;
+                    
                     return content[i]
                 }
             }
@@ -101,11 +106,12 @@ class Products {
     async getAll() {
         try{
             let getContent = [];
-            await knex('products').select("*").then((rows) => {
+            await this.knex(this.tableName).select("*").then((rows) => {
                 let rowsarr = rows;
                 rowsarr.map(row => getContent.push(JSON.parse(JSON.stringify(row))));
             });
             // const content = JSON.parse(getContent); 
+            
             return getContent
         }
         catch(err){
@@ -116,7 +122,7 @@ class Products {
     async deleteById(num) {
         try{
             let getContent = [];
-            await knex('products').select("*").then((rows) => {
+            await this.knex(this.tableName).select("*").then((rows) => {
                 let rowsarr = rows;
                 rowsarr.map(row => getContent.push(JSON.parse(JSON.stringify(row))));
             });
@@ -136,8 +142,9 @@ class Products {
             }
             // Throw error if ID was not found
             if (IDwasFound == 0) throw 'ID does not exist!';
-            await knex('products').where('id', '=', num).del();
+            await this.knex(this.tableName).where('id', '=', num).del();
             console.log('Escritura exitosa!');
+            
         }
         catch(err){
             throw new Error(`${err}`)
@@ -146,8 +153,9 @@ class Products {
 
     async deleteAll() {
         try {
-            await knex('products').del();
+            await this.knex(this.tableName).del();
             console.log('Escritura exitosa!')
+            
         } catch (err) {
             throw new Error(`${err}`) 
         }

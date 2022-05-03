@@ -6,8 +6,6 @@ const options = {
         password: '',
         database: 'isvshopdb'
     }
-}
+};
 
-module.exports = {
-    options
-}
+module.exports = options;

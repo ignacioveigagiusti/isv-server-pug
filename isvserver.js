@@ -4,15 +4,21 @@ const fs = require('fs');
 const { Server: IOServer } = require('socket.io');
 const { Server: HttpServer } = require('http');
 
+// Servers and express
 const app = express();
 const httpServer = new HttpServer(app);
 const io = new IOServer(httpServer);
 
+// Routers
 const productRouter = new Router();
 
+// Containers for DBs
 const Products = require('./api/products.js');
-const productContainer = new Products;
+const prodOptions = require('./options/mysqlDB'); 
+const msgOptions = require('./options/sqlite');
+const productContainer = new Products(prodOptions,'products');
 
+// JSON config
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 productRouter.use(express.json());
@@ -28,10 +34,10 @@ app.get('/', async (req, res) => {
     let allProducts = []
     try {
         allProducts = await productContainer.getAll();
+        res.render('pages/index.pug');
     } catch (err) {
         res.render('pages/index.pug', {error: err});
     }
-    res.render('pages/index.pug');
 })
 
 app.post('/', async (req, res) => {
@@ -40,9 +46,9 @@ app.post('/', async (req, res) => {
             throw 'Missing data. Product needs name, Price, Thumbnail, Category and Stock.'
         }
         let category = req.body.category;
-        let subcategory = req.body.subcategory;
+        let subcategory = req.body.subcategory || ' ';
         let name = req.body.name;
-        let description = req.body.description;
+        let description = req.body.description || ' ';
         let price = req.body.price;
         let stock = req.body.stock;
         let thumbnail = req.body.thumbnail;
@@ -50,7 +56,7 @@ app.post('/', async (req, res) => {
         stock = parseFloat(stock);
         const newProduct = {category:category, subcategory:subcategory, name:name, description:description, price:price, stock:stock, thumbnail:thumbnail};
         const savedProduct = await productContainer.save(newProduct);
-        res.send(JSON.stringify(savedProduct));
+        res.send(savedProduct);
     } catch (err) {
         res.status(400).send(err);
     }
@@ -66,18 +72,26 @@ app.post('/edit', async (req, res) => {
             throw 'No ID was provided';
         }
         const prevProduct = await productContainer.getById(putId);
+        let newTimestamp = String(new Date()).slice(0,33);
         let newCategory = prevProduct.category;
-        let newSubcategory = prevProduct.subcategory;
+        let newCat = prevProduct.cat;
+        let newSubcategory = prevProduct.subcategory || '';
         let newName = prevProduct.name;
-        let newDescription = prevProduct.description;
-        let newPrice = parseFloat(prevProduct.price);
-        let newStock = parseInt(prevProduct.stock);
+        let newDescription = prevProduct.description || '';
+        let newPrice = prevProduct.price;
+        let newStock = prevProduct.stock;
         let newThumbnail = prevProduct.thumbnail;
+        if (typeof req.body.timestamp === 'string' && req.body.timestamp !== '') {
+            newTimestamp = req.body.timestamp;
+        }
         if (typeof req.body.category === 'string' && req.body.category !== '') {
             newCategory = req.body.category;
         }
         if (typeof req.body.subcategory === 'string' && req.body.subcategory !== '') {
             newSubcategory = req.body.subcategory;
+        }
+        if (typeof req.body.cat === 'string' && req.body.cat !== '') {
+            newCat = req.body.cat;
         }
         if (typeof req.body.name === 'string' && req.body.name !== '') {
             newName = req.body.name;
@@ -90,11 +104,11 @@ app.post('/edit', async (req, res) => {
         }
         if (!isNaN(req.body.stock) && req.body.stock && req.body.stock !== '') {
             newStock = parseInt(req.body.stock);
-        }      
+        }    
         if (typeof req.body.thumbnail === 'string' && req.body.thumbnail !== '') {   
             newThumbnail = req.body.thumbnail;
         }
-        const newProduct = {category:newCategory, subcategory:newSubcategory, name:newName, description:newDescription, price:newPrice, stock:newStock, thumbnail:newThumbnail};
+        const newProduct = {timestamp:newTimestamp, category:newCategory, subcategory:newSubcategory, name:newName, description:newDescription, price:newPrice, stock:newStock, thumbnail:newThumbnail, cat:newCat};
         const editProduct = await productContainer.edit(putId, newProduct).catch((err) => {
             throw err
         });
@@ -171,7 +185,6 @@ productRouter.put('/:id', async (req, res) => {
         let newDescription = prevProduct.description || '';
         let newPrice = prevProduct.price;
         let newStock = prevProduct.stock;
-
         let newThumbnail = prevProduct.thumbnail;
         if (typeof req.body.timestamp === 'string' && req.body.timestamp !== '') {
             newTimestamp = req.body.timestamp;
@@ -231,12 +244,18 @@ httpServer.on("error", err => console.log(`Error en el servidor: ${err}`));
 
 io.on('connection', async (socket) => {
     console.log('Client connected');
-    const messages = JSON.parse(await fs.promises.readFile('./api/messages.json', 'utf8'));
+    const knex = require('knex')(msgOptions);
+    const messages = []
+    await knex('messages').select("*").then((rows) => {
+        let rowsarr = rows;
+        rowsarr.map(row => messages.push(JSON.parse(JSON.stringify(row))));
+    });
     try {
         socket.emit('messages', messages);
     } catch (err) {
         io.sockets.emit('msgError', err.message);
     }
+    knex.destroy();
     let products;
     try {
         products = await productContainer.getAll();
@@ -247,7 +266,7 @@ io.on('connection', async (socket) => {
     socket.on('newMessage', async data => {
         try {
             messages.push(data);
-            await fs.promises.writeFile('./api/messages.json', JSON.stringify(messages,null,2));
+            await knex('messages').insert(data);
             io.sockets.emit('messages', messages);    
         } catch (err) {
             io.sockets.emit('msgError', err.message);
