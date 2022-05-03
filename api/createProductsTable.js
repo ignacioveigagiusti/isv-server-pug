@@ -1,4 +1,4 @@
-const prodOptions = require('./options/mysqlDB'); 
+const prodOptions = require('../options/mysqlDB'); 
 const knex = require('knex')(prodOptions);
 
 const products = [
@@ -12,7 +12,7 @@ const products = [
         "description": "Aislante de lana de Vidrio hidrorepelente Isover revestido en una de sus caras con velo de vidrio reforzado. Aislamiento térmico y acústico, para instalaciones en paredes, sobre techos inclinados o cielorrasos suspendidos y entretechos en posición horizontal o inclinado sin carga.",
         "price": 450,
         "stock": 10,
-        "thumbnail": "https://isvshop.netlify.app/assets/acustiverR.png"
+        "thumbnail": "https://isvcommerce.netlify.app/assets/acustiverR.png"
     },
     {
         "id": 2,
@@ -24,7 +24,7 @@ const products = [
         "description": "Paneles de lana de vidrio ISOVER G3. Aislamiento acústico y térmico, diseñado para sistemas en seco y sobre cielorrasos de cualquier tipo. Tratamiento fonoabsorbente de locales para disminuir el Tiempo de Reverberación de los mismos. Sirve como revestimiento de muros, en el interior de tabiques y cielorrasos.",
         "price": 450,
         "stock": 8,
-        "thumbnail": "https://isvshop.netlify.app/assets/acustiverP.png"
+        "thumbnail": "https://isvcommerce.netlify.app/assets/acustiverP.png"
     },
     {
         "id": 3,
@@ -36,7 +36,7 @@ const products = [
         "description": "Placas de yeso, solución estándar para renovar o construir paredes, cielorrasos y revestimientos interiores en ambientes secos, como dormitorios, oficinas, locales comerciales, etc.",
         "price": 500,
         "stock": 0,
-        "thumbnail": "https://isvshop.netlify.app/assets/durlock.png"
+        "thumbnail": "https://isvcommerce.netlify.app/assets/durlock.png"
     },
     {
         "id": 4,
@@ -48,7 +48,7 @@ const products = [
         "description": "Vidrio laminado con placa interior de PVB. Aislamiento térmico y acústico para ventanas y puertas, con la posibilidad de utilizarse en arreglos de doble vidriado con cámara de aire para un aislamiento aún mayor.",
         "price": 10000,
         "stock": 7,
-        "thumbnail": "https://isvshop.netlify.app/assets/glass.png"
+        "thumbnail": "https://isvcommerce.netlify.app/assets/glass.png"
     },
     {
         "id": 5,
@@ -60,7 +60,7 @@ const products = [
         "description": "Mantenimiento, arreglo y refacción de cerramientos existentes que hayan podido haber perdido parte de sus cualidades de absorción, reflexión o aislamiento acústico.",
         "price": 1000,
         "stock": 1,
-        "thumbnail": "https://isvshop.netlify.app/assets/aislamiento.png"
+        "thumbnail": "https://isvcommerce.netlify.app/assets/aislamiento.png"
     },
     {
         "id": 6,
@@ -72,7 +72,7 @@ const products = [
         "description": "Instalación de soluciones constructivas con fines primordialmente acústicos.",
         "price": 1500,
         "stock": 1,
-        "thumbnail": "https://isvshop.netlify.app/assets/aislamiento.png"
+        "thumbnail": "https://isvcommerce.netlify.app/assets/aislamiento.png"
     },
     {
         "id": 7,
@@ -84,7 +84,7 @@ const products = [
         "description": "Asesoramiento y planeamiento de soluciones constructivas para recintos desde una perspectiva acústica.",
         "price": 1500,
         "stock": 1,
-        "thumbnail": "https://isvshop.netlify.app/assets/absorcion.png"
+        "thumbnail": "https://isvcommerce.netlify.app/assets/absorcion.png"
     },
     {
         "id": 8,
@@ -96,7 +96,7 @@ const products = [
         "description": "Programación de aplicaciones con fines ingenieriles relacionados al ámbito de la acústica. Lenguajes: MATLAB, Python, R, posibilidad de desarrollo de app web (MERN Stack).",
         "price": 2500,
         "stock": 1,
-        "thumbnail": "https://isvshop.netlify.app/assets/logoISV.png"
+        "thumbnail": "https://isvcommerce.netlify.app/assets/logoISV.png"
     }
 ];
 
